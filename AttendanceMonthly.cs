@@ -74,10 +74,10 @@ namespace AttendancesServices
                 ", count(*) cunt, name " +
                 ", sum(case when type = 'P' then 1 else 0 end) as pres " +
                 ", sum(case when type = 'A' then 1 else 0 end) as abse " +
-                ", sum(case when type = 'L' then 1 else 0 end) as leve " +
-                ", sum(case when type = 'O' then 1 else 0 end) as off " +
-                ", sum(case when type = 'T' then 1 else 0 end) as tran " +
-                ", sum(case when type = 'G' then 1 else 0 end) as gazz " +
+                ", sum(case when type in ('L', 'HL', 'SL', 'CL', 'AL', 'ML', 'PL') then 1 else 0 end) as leve " +
+                ", sum(case when type in ('O', 'WO') then 1 else 0 end) as off " +
+                ", sum(case when type in ('T', 'TO') then 1 else 0 end) as tran " +
+                ", sum(case when type in ('G', 'VO') then 1 else 0 end) as gazz " +
                 ", sum(case when (type = 'P' and lesstime > 0) then 1 else 0 end) as lesstime " +
                 ", sum(case when (type = 'P' and latearrival > 0) then 1 else 0 end) as latearrival " +
                 ", sum(case when (type = 'P' and missed > 0) then 1 else 0 end) as missed " +

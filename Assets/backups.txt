@@ -57,6 +57,7 @@ namespace AttendancesServices
             var actual_shifttime_ends_next = new Dictionary<string, DateTime>();
             // Dictionary<string, DateTime> actual_shifttime_ends_prev;// = new Dictionary<string, DateTime>();  //string.Empty;
             // Dictionary<string, string> shiftTimeDict;
+
             // var DataAttendanceRow = new Dictionary<string, Dictionary<string, Attendance>>();
 
            
@@ -108,7 +109,7 @@ namespace AttendancesServices
 
                 if (!DictData[sap_code][NewDate].ContainsKey("asm_id"))
                 {
-                    employeeUserDict = GetUserEmployee(sap_code, conn); //NewDate,
+                    employeeUserDict = GetUserEmployee(sap_code); //NewDate,
                     if (employeeUserDict.Count() < 1)
                     {
                         continue;
@@ -431,7 +432,72 @@ namespace AttendancesServices
 
             SetAttendanceData(DictData);
             conn.Close();
-        
+            // Console.Write(DictData);
+            // string empUsr = selectAttendanceEmployeeUsers();
+            // OpenConection();
+            // MySqlCommand cmd = new MySqlCommand(empUsr, conn);
+            // Create a data reader and Execute the command
+            // MySqlDataReader dataReader = cmd.ExecuteReader();
+
+            //Read the data and store them in the list
+            // while (dataReader.Read())
+            // {
+            //    Console.Write(" {0}\n", dataReader["EmployeeCode"]);
+            //    Console.Write(" {0}\n", dataReader["CardTime"]);
+            //    Console.Write(" {0}\n", dataReader["role_id"]);
+            //    Console.Write(" {0}\n", dataReader["login"]);
+            //    Console.Write(" {0}\n", dataReader["sap_code"]);
+            //    Console.Write(" {0}\n", dataReader["full_name"]);
+            //    Console.Write(" {0}\n", dataReader["slug"]);
+            //}
+
+            //close Data Reader
+            // dataReader.Close();
+
+            //close Connection
+            // CloseConnection();
+
+            //return list to be displayed
+            // return list;
+
+            /* string contactQry = "select id, phone from contacts where id > " + campaigns["last_run"] + " and company_id = " + campaigns["company_id"] + " and file_id = " + campaigns["file_id"] + " LIMIT " + campaigns["channels"] + " ; ";*/
+
+            /*string attenUsrEmpQry = "SELECT * FROM";
+            attenUsrEmpQry += " (SELECT `kqz_employee`.`EmployeeCode`, `kqz_card`.`CardTime` ";
+            attenUsrEmpQry += " FROM `kqz_employee`	INNER JOIN `kqz_card` ON `kqz_employee`.`EmployeeID` = `kqz_card`.`EmployeeID` ";
+            attenUsrEmpQry += " WHERE `kqz_card`.`CardTime` >= '"+ localMonthDate.ToString("yyyy-MM-dd HH:mm:ss") + "' ";
+            attenUsrEmpQry += " AND `kqz_card`.`CardTime` <= '"+ localDate.ToString("yyyy-MM-dd HH:mm:ss") + "'  ";
+            attenUsrEmpQry += " ORDER BY `CardTime` ASC ) attend, ";
+            attenUsrEmpQry += " ( SELECT `tbl_users`.`role_id`, `tbl_users`.`login`, `tbl_employees`.`sap_code`, `tbl_employees`.`full_name`, `tbl_setups`.`slug` ";
+            attenUsrEmpQry += " from tbl_employees ";
+            attenUsrEmpQry += " INNER JOIN `tbl_users` ON `tbl_users`.`employee_id` = `tbl_employees`.`id` ";
+            attenUsrEmpQry += " INNER JOIN `tbl_setups` ON `tbl_setups`.`id` = `tbl_users`.`role_id` ";
+            attenUsrEmpQry += " ) useremp ";
+            attenUsrEmpQry += " where (attend.EmployeeCode = useremp.sap_code or attend.EmployeeCode = useremp.login) ";*/
+
+
+            /* 
+             Console.Write(" {0}\n", attenUsrEmpQry);
+             DataSet attenUsrEmpDS = new DataSet();
+             DataTable attenUsrEmpDT = new DataTable();
+             OpenConection();
+             //MySqlCommand attenUsrEmpQryCmd = new MySqlCommand(attenUsrEmpQry, conn);
+
+             MySqlDataAdapter attenUsrEmpQryCmdAdapter = new MySqlDataAdapter(attenUsrEmpQry, conn);
+
+             // OpenConection();
+             attenUsrEmpQryCmdAdapter.Fill(attenUsrEmpDS, "UserEmployee");
+             //attenUsrEmpQryCmdAdapter.Fill(attenUsrEmpDT);
+             CloseConnection();
+
+             *//*using (MySqlDataAdapter attenUsrEmpQryCmdAdapter = new MySqlDataAdapter(attenUsrEmpQryCmd))
+             {
+                 // DataTable dt = new DataTable();
+                 OpenConection();
+                 attenUsrEmpQryCmdAdapter.Fill(attenUsrEmpDT);
+                 CloseConnection();
+                 // Do something with results
+             }*/
 
             /*attenUsrEmpDT.Load(attenUsrEmpQryCmd.ExecuteReader());*/
             /*  Console.Write(" {0}\n", attenUsrEmpDS);*/
@@ -612,6 +678,190 @@ namespace AttendancesServices
                         {
                             AttendaceUpdate(conn, dictInner, count);
                         }
+                        //string SelectCheck = "select count(*) from tbl_attendances_machine where asm_id = " + dictInner["asm_id"] + " and date = '" + itemL2.Key + "'"; //" and sap_code = " + item.Key +
+                        //Console.Write(" {0}\n", SelectCheck);
+                        //MySqlCommand SelectCheckCommand = new MySqlCommand(SelectCheck, conn);
+                        /*SelectCheckCommand.Parameters.AddWithValue("@asm_id", dictInner["asm_id"]);
+                        SelectCheckCommand.Parameters.AddWithValue("@date", "'"+itemL2.Key+"'");
+                        SelectCheckCommand.Parameters.AddWithValue("@sap_code", "'" + item.Key + "'");*/
+                       /* string InsertUpdateQry = string.Empty;
+                        string insertColumns = string.Empty;
+                        string insertValues = string.Empty;
+                        string updateColumns = " proc = 'Service', applied = 0, span=0, type='P'";
+
+                        /// Int64 count = (Int64)SelectCheckCommand.ExecuteScalar();
+                        // SelectCheckCommand.Dispose();
+                        if (!string.IsNullOrEmpty(dictInner["employee_id"]))
+                        {
+                            updateColumns += ", employee_id = '" + dictInner["employee_id"] + "' ";
+                            insertColumns += ", employee_id ";
+                            insertValues += ", '" + dictInner["employee_id"] + "' ";
+                        }
+                        if (!string.IsNullOrEmpty(dictInner["title"]))
+                        {
+                            updateColumns += ", title = '" + dictInner["title"] + "' ";
+                            insertColumns += ", title ";
+                            insertValues += ", '" + dictInner["title"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("InDatetime") && !string.IsNullOrEmpty(dictInner["InDatetime"]))
+                        {
+                            updateColumns += ", InDatetime = '" + dictInner["InDatetime"] + "' ";
+                            insertColumns += ", InDatetime ";
+                            insertValues += ", '" + dictInner["InDatetime"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("Intime") && !string.IsNullOrEmpty(dictInner["Intime"]))
+                        {
+                            updateColumns += ", Intime = '" + dictInner["Intime"] + "' ";
+                            insertColumns += ", Intime ";
+                            insertValues += ", '" + dictInner["Intime"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("OutDatetime") && !string.IsNullOrEmpty(dictInner["OutDatetime"]))
+                        {
+                            updateColumns += ", OutDatetime = '" + dictInner["OutDatetime"] + "' ";
+                            insertColumns += ", OutDatetime ";
+                            insertValues += ", '" + dictInner["OutDatetime"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("Outtime") && !string.IsNullOrEmpty(dictInner["Outtime"]))
+                        {
+                            updateColumns += ", Outtime = '" + dictInner["Outtime"] + "' ";
+                            insertColumns += ", Outtime ";
+                            insertValues += ", '" + dictInner["Outtime"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("Shifttime") && !string.IsNullOrEmpty(dictInner["Shifttime"]))
+                        {
+                            updateColumns += ", shifttime = '" + dictInner["Shifttime"] + "' ";
+                            insertColumns += ", shifttime ";
+                            insertValues += ", '" + dictInner["Shifttime"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("lesstime") && !string.IsNullOrEmpty(dictInner["lesstime"]))
+                        {
+                            updateColumns += ", lesstime = '" + dictInner["lesstime"] + "' ";
+                            insertColumns += ", lesstime ";
+                            insertValues += ", '" + dictInner["lesstime"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("latearrival") && !string.IsNullOrEmpty(dictInner["latearrival"]))
+                        {
+                            updateColumns += ", latearrival = '" + dictInner["latearrival"] + "' ";
+                            insertColumns += ", latearrival ";
+                            insertValues += ", '" + dictInner["latearrival"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("missed") && !string.IsNullOrEmpty(dictInner["missed"]))
+                        {
+                            updateColumns += ", missed = '" + dictInner["missed"] + "' ";
+                            insertColumns += ", missed ";
+                            insertValues += ", '" + dictInner["missed"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("color") && !string.IsNullOrEmpty(dictInner["color"]))
+                        {
+                            updateColumns += ", color = '" + dictInner["color"] + "' ";
+                            insertColumns += ", color ";
+                            insertValues += ", '" + dictInner["color"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("Intimefound") && !string.IsNullOrEmpty(dictInner["Intimefound"]))
+                        {
+                            updateColumns += ", Intimefound = '" + dictInner["Intimefound"] + "' ";
+                            insertColumns += ", Intimefound ";
+                            insertValues += ", '" + dictInner["Intimefound"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("Outtimefound") && !string.IsNullOrEmpty(dictInner["Outtimefound"]))
+                        {
+                            updateColumns += ", Outtimefound = '" + dictInner["Outtimefound"] + "' ";
+                            insertColumns += ", Outtimefound ";
+                            insertValues += ", '" + dictInner["Outtimefound"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("Shifttimefound") && !string.IsNullOrEmpty(dictInner["Shifttimefound"]))
+                        {
+                            updateColumns += ", Shifttimefound = '" + dictInner["Shifttimefound"] + "' ";
+                            insertColumns += ", Shifttimefound ";
+                            insertValues += ", '" + dictInner["Shifttimefound"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("ShiftDatetime") && !string.IsNullOrEmpty(dictInner["ShiftDatetime"]))
+                        {
+                            updateColumns += ", ShiftDatetime = '" + dictInner["ShiftDatetime"] + "' ";
+                            insertColumns += ", ShiftDatetime ";
+                            insertValues += ", '" + dictInner["ShiftDatetime"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("ShiftStart") && !string.IsNullOrEmpty(dictInner["ShiftStart"]))
+                        {
+                            updateColumns += ", ShiftStart = '" + dictInner["ShiftStart"] + "' ";
+                            insertColumns += ", ShiftStart ";
+                            insertValues += ", '" + dictInner["ShiftStart"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("ShiftEnd") && !string.IsNullOrEmpty(dictInner["ShiftEnd"]))
+                        {
+                            updateColumns += ", ShiftEnd = '" + dictInner["ShiftEnd"] + "' ";
+                            insertColumns += ", ShiftEnd ";
+                            insertValues += ", '" + dictInner["ShiftEnd"] + "' ";
+                        }
+                        if (dictInner.ContainsKey("difference") && !string.IsNullOrEmpty(dictInner["difference"]))
+                        {
+                            updateColumns += ", difference = '" + dictInner["difference"] + "' ";
+                            insertColumns += ", difference ";
+                            insertValues += ", '" + dictInner["difference"] + "' ";
+                        }
+
+                        if (count > 0)
+                        {
+                            InsertUpdateQry = " UPDATE tbl_attendances_machine set " + updateColumns;
+                            InsertUpdateQry += " where asm_id = " + dictInner["asm_id"] + " and date = '" + itemL2.Key + "'"; // + " and sap_code = " + item.Key + "";
+
+                        }
+                        else
+                        {
+                            InsertUpdateQry = " INSERT INTO tbl_attendances_machine ( asm_id, date, sap_code " + insertColumns + ", proc, applied, span, type) ";
+                            InsertUpdateQry += " values ( " + dictInner["asm_id"] + ", '" + itemL2.Key + "' , " + item.Key + " " + insertValues + ", 'Service', 0, 0, 'P' )";
+                            // insertColumns += ", proc ) ";
+                            // insertValues += ", 'Service' ) ";
+                            // string updateQry = insertColumns + " " + insertValues;
+                            *//*
+                            if (string.IsNullOrEmpty(dictInner["Intimefound"]))
+                            {
+                                dictInner["Intimefound"] = "0";
+                            }
+                            if (string.IsNullOrEmpty(dictInner["Outtimefound"]))
+                            {
+                                dictInner["Outtimefound"] = "0";
+                            }*//*
+                        }
+
+                        Console.Write(" {0}\n", InsertUpdateQry);
+
+
+                        MySqlCommand command = new MySqlCommand(InsertUpdateQry, conn);
+                        command.ExecuteNonQuery();
+                        *//*if (command.ExecuteNonQuery() != 1)
+                        {
+                            //'handled as needed, //' but this snippet will throw an exception to force a rollback
+                            throw new InvalidProgramException();
+                        }*//*
+                        command.Dispose();*/
+                        // dictInner["Intimefound"] = (string.IsNullOrEmpty(dictInner["Intimefound"])) ? 0 : dictInner["Intimefound"];
+                        // Define a query returning a single row result set
+                        /*   string updateQry = "INSERT INTO tbl_attendances_machine (asm_id, date, sap_code, title, InDatetime, Intime, OutDatetime, Outtime, shifttime, lesstime, latearrival, missed, color, Intimefound, Outtimefound, Shifttimefound, ShiftDatetime, ShiftStart, ShiftEnd, difference, from )";
+                           updateQry += " values (" + dictInner["asm_id"] + ", ";
+                           updateQry += itemL2.Key + ", ";
+                           updateQry += item.Key + ", '";
+                           updateQry += dictInner["title"] + "', ";
+                           updateQry += "'"+dictInner["InDatetime"] + "', ";
+                           updateQry += "'" + dictInner["Intime"] + "', ";
+                           updateQry += "'" + dictInner["OutDatetime"] + "', ";
+                           updateQry += "'" + dictInner["Outtime"] + "', ";
+                           updateQry += "'" + dictInner["Shifttime"] + "', ";
+                           updateQry += dictInner["lesstime"] + ", ";
+                           updateQry += dictInner["latearrival"] + ", ";
+                           updateQry += dictInner["missed"] + ", '";
+                           updateQry += dictInner["color"] + "', ";
+                           updateQry += dictInner["Intimefound"] + ", ";
+                           updateQry += dictInner["Outtimefound"] + ", ";
+                           updateQry += dictInner["Shifttimefound"] + ", ";
+                           updateQry += "'" + dictInner["ShiftDatetime"] + "', ";
+                           updateQry += "'" + dictInner["ShiftStart"] + "', ";
+                           updateQry += "'" + dictInner["ShiftEnd"] + "', '";
+                           updateQry += dictInner["difference"] + "', ";
+                           updateQry += "'Service')";*/
+                        // Execute the query and obtain the value of the first column of the first row
+                        //int cnt = command.ExecuteNonQuery();
+                        // Console.Write("Saved Rown Campaigns are {0}\n", cnt);
                     }
                 }
             }
@@ -659,3 +909,140 @@ namespace AttendancesServices
 
     }
 }
+
+
+
+
+private Dictionary<string, string> GetUserEmployeeGazetted(string code)//
+        {
+            // DateTime cardTime = Convert.ToDateTime(dateValue);
+            Dictionary<string, string> employeeUserDict = new Dictionary<string, string>();
+
+            string employyeeUserQry = "SELECT  `tbl_employees`.`id`, `tbl_users`.`role_id`, `tbl_users`.`login`, `tbl_employees`.`sap_code`, `tbl_employees`.`full_name`, `tbl_setups`.`slug` ";
+            employyeeUserQry += " from tbl_employees ";
+            employyeeUserQry += " INNER JOIN `tbl_users` ON `tbl_users`.`employee_id` = `tbl_employees`.`id` ";
+            employyeeUserQry += " INNER JOIN `tbl_setups` ON `tbl_setups`.`id` = `tbl_users`.`role_id` ";
+            employyeeUserQry += " where tbl_employees.status = 1 " +
+                " and (tbl_employees.sap_code = " + code + " or tbl_users.login = " + code + " )" +
+                " ORDER BY tbl_employees.created desc limit 1 ";
+
+            Console.Write(" {0}\n", employyeeUserQry);
+
+
+            using (MySqlCommand employeeUserCmd = new MySqlCommand(employyeeUserQry, conn))
+            {
+                employeeUserCmd.CommandType = CommandType.Text;
+                using (MySqlDataReader attenUsrEmpRdr = employeeUserCmd.ExecuteReader())
+                {
+                    if (attenUsrEmpRdr.HasRows)
+                    {
+                        while (attenUsrEmpRdr.Read())
+                        {
+                            employeeUserDict["employee_id"] = attenUsrEmpRdr["id"].ToString();
+                            employeeUserDict["role_id"] = attenUsrEmpRdr["role_id"].ToString();
+                            employeeUserDict["asm_id"] = attenUsrEmpRdr["login"].ToString();
+                            employeeUserDict["sap_code"] = attenUsrEmpRdr["sap_code"].ToString();
+                            employeeUserDict["slug"] = attenUsrEmpRdr["slug"].ToString();
+                            employeeUserDict["full_name"] = attenUsrEmpRdr["full_name"].ToString();
+
+                            String slug = attenUsrEmpRdr["slug"].ToString();
+                            if (slug.Contains("ALTER"))
+                            {
+                                employeeUserDict["weeklyOff"] = "alternative";
+                                employeeUserDict["working_hour"] = "08:30";
+                                employeeUserDict["working_hour_number"] = "8.5";
+                            }
+                            else if (slug.Contains("DUAL"))
+                            {
+                                employeeUserDict["weeklyOff"] = "dual";
+                                employeeUserDict["working_hour"] = "09:00";
+                                employeeUserDict["working_hour_number"] = "9.0";
+                            }
+                            else
+                            {
+                                employeeUserDict["weeklyOff"] = "single";
+                                employeeUserDict["working_hour"] = "08:00";
+                                employeeUserDict["working_hour_number"] = "8.0";
+                            }
+                        }
+                    }
+                    /*else
+                    {
+                        employeeUserDict["weeklyOff"] = "single";
+                        employeeUserDict["working_hour"] = "08:00";
+                        employeeUserDict["working_hour_number"] = "8.0";
+                    }*/
+                }
+
+            }
+            // CloseConnection();
+            return employeeUserDict;
+        }
+
+
+
+        private Dictionary<string, string> GetUserEmployeeOffDays(string code)//
+        {
+            // DateTime cardTime = Convert.ToDateTime(dateValue);
+            Dictionary<string, string> employeeUserDict = new Dictionary<string, string>();
+
+            string employyeeUserQry = "SELECT  `tbl_employees`.`id`, `tbl_users`.`role_id`, `tbl_users`.`login`, `tbl_employees`.`sap_code`, `tbl_employees`.`full_name`, `tbl_setups`.`slug` ";
+            employyeeUserQry += " from tbl_employees ";
+            employyeeUserQry += " INNER JOIN `tbl_users` ON `tbl_users`.`employee_id` = `tbl_employees`.`id` ";
+            employyeeUserQry += " INNER JOIN `tbl_setups` ON `tbl_setups`.`id` = `tbl_users`.`role_id` ";
+            employyeeUserQry += " where tbl_employees.status = 1 " +
+                " and (tbl_employees.sap_code = " + code + " or tbl_users.login = " + code + " )" +
+                " ORDER BY tbl_employees.created desc limit 1 ";
+
+            Console.Write(" {0}\n", employyeeUserQry);
+
+
+            using (MySqlCommand employeeUserCmd = new MySqlCommand(employyeeUserQry, conn))
+            {
+                employeeUserCmd.CommandType = CommandType.Text;
+                using (MySqlDataReader attenUsrEmpRdr = employeeUserCmd.ExecuteReader())
+                {
+                    if (attenUsrEmpRdr.HasRows)
+                    {
+                        while (attenUsrEmpRdr.Read())
+                        {
+                            employeeUserDict["employee_id"] = attenUsrEmpRdr["id"].ToString();
+                            employeeUserDict["role_id"] = attenUsrEmpRdr["role_id"].ToString();
+                            employeeUserDict["asm_id"] = attenUsrEmpRdr["login"].ToString();
+                            employeeUserDict["sap_code"] = attenUsrEmpRdr["sap_code"].ToString();
+                            employeeUserDict["slug"] = attenUsrEmpRdr["slug"].ToString();
+                            employeeUserDict["full_name"] = attenUsrEmpRdr["full_name"].ToString();
+
+                            String slug = attenUsrEmpRdr["slug"].ToString();
+                            if (slug.Contains("ALTER"))
+                            {
+                                employeeUserDict["weeklyOff"] = "alternative";
+                                employeeUserDict["working_hour"] = "08:30";
+                                employeeUserDict["working_hour_number"] = "8.5";
+                            }
+                            else if (slug.Contains("DUAL"))
+                            {
+                                employeeUserDict["weeklyOff"] = "dual";
+                                employeeUserDict["working_hour"] = "09:00";
+                                employeeUserDict["working_hour_number"] = "9.0";
+                            }
+                            else
+                            {
+                                employeeUserDict["weeklyOff"] = "single";
+                                employeeUserDict["working_hour"] = "08:00";
+                                employeeUserDict["working_hour_number"] = "8.0";
+                            }
+                        }
+                    }
+                    /*else
+                    {
+                        employeeUserDict["weeklyOff"] = "single";
+                        employeeUserDict["working_hour"] = "08:00";
+                        employeeUserDict["working_hour_number"] = "8.0";
+                    }*/
+                }
+
+            }
+            // CloseConnection();
+            return employeeUserDict;
+        }

@@ -72,20 +72,54 @@ namespace AttendancesServices
                         Dictionary<string, string> leave = GetLeaveEntitle(DailyAttendanceDR["title"].ToString());
                         /* shiftTimeDict["leave"] = attenShiftSlr; */
 
-                        /* updateColumns += ", sub_title = '" + leave["title"] + "' ";
-                         updateColumns += ", color = '" + leave["color"] + "' ";
- */
-                        if (String.Equals(type, "off"))
+                        /* 
+                         * updateColumns += ", sub_title = '" + leave["title"] + "' ";
+                         * updateColumns += ", color = '" + leave["color"] + "' ";
+                         */
+                        insertColumns += ", type ";
+                        insertValues += ", '" + leave["type"] + "' ";
+                        
+                        /*if (String.Equals(type, "off") || String.Equals(type, "weekly_off"))
                         {
                             insertColumns += ", type ";
-                            insertValues += ", 'O' ";
+                            insertValues += ", 'WO' ";
 
+                        }
+                        else if (String.Equals(type, "os") || String.Equals(type, "out_station"))
+                        {
+                            insertColumns += ", type ";
+                            insertValues += ", 'OSO' ";
+                        }
+                        else if (String.Equals(type, "cv") || String.Equals(type, "client_visit"))
+                        {
+                            insertColumns += ", type ";
+                            insertValues += ", 'CVO' ";
+                        }
+                        else if (String.Equals(type, "ad") || String.Equals(type, "away_day"))
+                        {
+                            insertColumns += ", type ";
+                            insertValues += ", 'ADO' ";
+                        }
+                        else if (String.Equals(type, "vl") || String.Equals(type, "volunteer"))
+                        {
+                            insertColumns += ", type ";
+                            insertValues += ", 'VO' ";
+                        }
+                        else if (String.Equals(type, "tp") || String.Equals(type, "training"))
+                        {
+                            insertColumns += ", type ";
+                            insertValues += ", 'TO' ";
+                        }
+                        else if (String.Equals(type, "oc") || String.Equals(type, "off_call"))
+                        {
+                            insertColumns += ", type ";
+                            insertValues += ", 'OCO' ";
                         }
                         else
                         {
                             insertColumns += ", type ";
-                            insertValues += ", 'T' ";
-                        }
+                            insertValues += ", 'A' ";
+                        }*/
 
                         insertColumns += ", color ";
                         insertValues += ", '"+ leave["color"] + "' ";
@@ -196,17 +230,24 @@ namespace AttendancesServices
                 " from tbl_attendances_daily join tbl_users on (`tbl_attendances_daily`.`asm_id` = `tbl_users`.`login`) " +
                 " where `tbl_attendances_daily`.`date` >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' " +
                 " and `tbl_attendances_daily`.`date` <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
-                " and ( LOWER(`tbl_attendances_daily`.`status`) = 'off' or LOWER(`tbl_attendances_daily`.`status`) = 'ta' or LOWER(`tbl_attendances_daily`.`status`) = 'tp' ) ";
+                " and ( LOWER(`tbl_attendances_daily`.`status`) = 'off' " +
+                "   or LOWER(`tbl_attendances_daily`.`status`) = 'ta' " +
+                "   or LOWER(`tbl_attendances_daily`.`status`) = 'tp' " +
+                "   or LOWER(`tbl_attendances_daily`.`status`) = 'cv' " +
+                "   or LOWER(`tbl_attendances_daily`.`status`) = 'ad' " +
+                "   or LOWER(`tbl_attendances_daily`.`status`) = 'os' " +
+                "   or LOWER(`tbl_attendances_daily`.`status`) = 'vl' " +
+                "   or LOWER(`tbl_attendances_daily`.`status`) = 'oc' " +
+                "   or LOWER(`tbl_attendances_daily`.`status`) = 'a' " +
+                " ) ";
 
             Console.Write(" {0}\n", DailySelectQry);
 
             // OpenConection();
-            // MySqlCommand attenUsrEmp = new MySqlCommand(attenUsrEmpQry, conn); 
-            DataSet DailySelectDS = new DataSet();
+            // MySqlCommand attenUsrEmp = new MySqlCommand(attenUsrEmpQry, conn);     
+            DataSet DailySelectDS = new DataSet();        
             // DataTable DailySelectDT = new DataTable();
             // MySqlDataReader attenUsrEmpRdr;
-
-
             try
             {
                 // Way 1

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    sealed class Absent : Common, IDisposable
+    sealed class Absent : CommonQueries, IDisposable
     {
         private DateTime localDate; // = DateTime.Now.AddMonths(-1);
         private DateTime localMonthDate; // = DateTime.Now.AddMonths(-4);
@@ -37,7 +37,7 @@ namespace AttendancesServices
         public void RemoveAbsenties()
         {
             string DeleteQry = " Delete from tbl_attendances_machine ";
-            DeleteQry += " where type in ('A','O','L') and date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' and date <= '" + localDate.ToString("yyyy-MM-dd") + "'";
+            DeleteQry += " where type not in ('P','A','L','AL','CL','SL','HL') and date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' and date <= '" + localDate.ToString("yyyy-MM-dd") + "'";
 
             // OpenConection();
             Console.Write(" {0}\n", DeleteQry);
@@ -69,7 +69,7 @@ namespace AttendancesServices
                 // while (SelectCheckRdr.Read())  // 	WEEKDAY("2021-01-26") in (5,6) Saturday and Sunday;
                 // {
                 Console.Write(" {0}\n", SelectCheckRdr["asm_id"]);
-                employeeUserDict = GetUserEmployeeOffDays(SelectCheckRdr["asm_id"].ToString());//localDate.ToString("yyyy-MM-dd"),
+                employeeUserDict = GetUserEmployee(SelectCheckRdr["asm_id"].ToString(), conn);//localDate.ToString("yyyy-MM-dd"),
                 if (!employeeUserDict.ContainsKey("asm_id"))
                 {
                     continue;
@@ -91,7 +91,7 @@ namespace AttendancesServices
                         WeeklyData["color"] = "#e83e8c";
                         WeeklyData["title"] = "Absent";
                         WeeklyData["employee_id"] = employeeUserDict["employee_id"];
-                        WeeklyData["name"] = employeeUserDict["full_name"];
+                        WeeklyData["name"] = employeeUserDict["name"];
 
                         // WeeklyData["color"] = "#07d4a1";
                         // WeeklyData["title"] = "Weekly Off";
@@ -129,73 +129,6 @@ namespace AttendancesServices
             }
             return SelectCheckDt;
         }
-
-        private Dictionary<string, string> GetUserEmployeeOffDays(string code)//
-        {
-            // DateTime cardTime = Convert.ToDateTime(dateValue);
-            Dictionary<string, string> employeeUserDict = new Dictionary<string, string>();
-
-            string employyeeUserQry = "SELECT  `tbl_employees`.`id`, `tbl_users`.`role_id`, `tbl_users`.`login`, `tbl_employees`.`sap_code`, `tbl_employees`.`full_name`, `tbl_setups`.`slug` ";
-            employyeeUserQry += " from tbl_employees ";
-            employyeeUserQry += " INNER JOIN `tbl_users` ON `tbl_users`.`employee_id` = `tbl_employees`.`id` ";
-            employyeeUserQry += " INNER JOIN `tbl_setups` ON `tbl_setups`.`id` = `tbl_users`.`role_id` ";
-            employyeeUserQry += " where tbl_employees.status = 1 " +
-                " and (tbl_employees.sap_code = " + code + " or tbl_users.login = " + code + " )" +
-                " ORDER BY tbl_employees.created desc limit 1 ";
-
-            Console.Write(" {0}\n", employyeeUserQry);
-
-
-            using (MySqlCommand employeeUserCmd = new MySqlCommand(employyeeUserQry, conn))
-            {
-                employeeUserCmd.CommandType = CommandType.Text;
-                using (MySqlDataReader attenUsrEmpRdr = employeeUserCmd.ExecuteReader())
-                {
-                    if (attenUsrEmpRdr.HasRows)
-                    {
-                        while (attenUsrEmpRdr.Read())
-                        {
-                            employeeUserDict["employee_id"] = attenUsrEmpRdr["id"].ToString();
-                            employeeUserDict["role_id"] = attenUsrEmpRdr["role_id"].ToString();
-                            employeeUserDict["asm_id"] = attenUsrEmpRdr["login"].ToString();
-                            employeeUserDict["sap_code"] = attenUsrEmpRdr["sap_code"].ToString();
-                            employeeUserDict["slug"] = attenUsrEmpRdr["slug"].ToString();
-                            employeeUserDict["full_name"] = attenUsrEmpRdr["full_name"].ToString();
-
-                            String slug = attenUsrEmpRdr["slug"].ToString();
-                            if (slug.Contains("ALTER"))
-                            {
-                                employeeUserDict["weeklyOff"] = "alternative";
-                                employeeUserDict["working_hour"] = "08:30";
-                                employeeUserDict["working_hour_number"] = "8.5";
-                            }
-                            else if (slug.Contains("DUAL"))
-                            {
-                                employeeUserDict["weeklyOff"] = "dual";
-                                employeeUserDict["working_hour"] = "09:00";
-                                employeeUserDict["working_hour_number"] = "9.0";
-                            }
-                            else
-                            {
-                                employeeUserDict["weeklyOff"] = "single";
-                                employeeUserDict["working_hour"] = "08:00";
-                                employeeUserDict["working_hour_number"] = "8.0";
-                            }
-                        }
-                    }
-                    /*else
-                    {
-                        employeeUserDict["weeklyOff"] = "single";
-                        employeeUserDict["working_hour"] = "08:00";
-                        employeeUserDict["working_hour_number"] = "8.0";
-                    }*/
-                }
-
-            }
-            // CloseConnection();
-            return employeeUserDict;
-        }
-
         private long SetWeeklyOffData(Dictionary<string, string> data, DateTime todayDate)
         {
             string InsertUpdateQry; // = string.Empty;

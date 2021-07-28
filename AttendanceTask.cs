@@ -208,10 +208,9 @@ namespace AttendancesServices
             DailyThread.Start();
             DailyThread.Join();
 
-
-            OffThread = new Thread(RunWeeklyOff); // offweeks.GetOffDays();
+            /*OffThread = new Thread(RunWeeklyOff); // offweeks.GetOffDays();
             OffThread.Start();
-            OffThread.Join();
+            OffThread.Join();*/
 
             GazThread = new Thread(RunGazetted); // GazettedOff.GetGazetted();
             GazThread.Start();
@@ -300,9 +299,9 @@ namespace AttendancesServices
                 LeaveThread.Start();
                 LeaveThread.Join();
 
-                OffThread = new Thread(RunWeeklyOff); // offweeks.GetOffDays();
+                /*OffThread = new Thread(RunWeeklyOff); // offweeks.GetOffDays();
                 OffThread.Start();
-                OffThread.Join();
+                OffThread.Join();*/
 
                 GazThread = new Thread(RunGazetted); // GazettedOff.GetGazetted();
                 GazThread.Start();

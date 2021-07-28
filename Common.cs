@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,89 +46,123 @@ namespace AttendancesServices
         protected Dictionary<string, string> GetLeaveEntitle(string attenShiftSlr)
         {
             Dictionary<string, string> shiftTimeDict = new Dictionary<string, string>();
+            
 
             //if (!string.IsNullOrEmpty(attenShiftSlr))
             //{
-            if (attenShiftSlr == "annual")
+            if (attenShiftSlr.CompareTo("annual") == 0) //(attenShiftSlr == "annual")
             {
                 shiftTimeDict["title"] = "Annual Leave";
                 shiftTimeDict["color"] = "#28a745";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "annual"; // attenShiftSlr;
+                shiftTimeDict["type"] = "AL";
             }
-            else if (attenShiftSlr == "sl")
+            else if (attenShiftSlr.CompareTo("sick") == 0 || attenShiftSlr.CompareTo("sl") == 0) // (attenShiftSlr == "sl")
             {
                 shiftTimeDict["title"] = "Sick Leave";
                 shiftTimeDict["color"] = "#17a2b8";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "sick";
+                shiftTimeDict["type"] = "SL";
             }
-            else if (attenShiftSlr == "cl")
+            else if (attenShiftSlr.CompareTo("casual") == 0 || attenShiftSlr.CompareTo("cl") == 0) // (attenShiftSlr == "cl")
             {
                 shiftTimeDict["title"] = "Casual Leave";
                 shiftTimeDict["color"] = "#a011a5";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "casual";
+                shiftTimeDict["type"] = "CL";
             }
-
-            else if (attenShiftSlr == "oc")
+            else if (attenShiftSlr.CompareTo("off_call") == 0 || attenShiftSlr.CompareTo("oc") == 0) //(attenShiftSlr == "oc")
             {
                 shiftTimeDict["title"] = "Off Call";
                 shiftTimeDict["color"] = "#ffc107";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "off_call";
+                shiftTimeDict["type"]  = "OCO";
             }
-            else if (attenShiftSlr == "vl")
+            else if (attenShiftSlr.CompareTo("volunteer") == 0 || attenShiftSlr.CompareTo("vl") == 0) //(attenShiftSlr == "vl")
             {
                 shiftTimeDict["title"] = "Volunteer";
                 shiftTimeDict["color"] = "#dc3545";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "volunteer";
+                shiftTimeDict["type"]  = "VO";
             }
-            else if (attenShiftSlr.ToLower() == "off")
+            else if (attenShiftSlr.CompareTo("weekly_off") == 0 || attenShiftSlr.ToLower() == "off") // ()
             {
                 shiftTimeDict["title"] = "Weekly Off";
                 shiftTimeDict["color"] = "#07d4a1";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "weekly_off";
+                shiftTimeDict["type"]  = "WO";
             }
-            else if (attenShiftSlr.ToLower() == "a")
+            else if (attenShiftSlr.CompareTo("absent") == 0 || attenShiftSlr.ToLower() == "a" || attenShiftSlr.ToLower() == "ta") // ()
             {
                 shiftTimeDict["title"] = "Absent";
                 shiftTimeDict["color"] = "#e83e8c";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "absent";
+                shiftTimeDict["type"]  = "A";
             }
-            else if (attenShiftSlr.ToLower() == "p")
+            else if (attenShiftSlr.CompareTo("present") == 0 || attenShiftSlr.ToLower() == "p") //()
             {
                 shiftTimeDict["title"] = "Present";
                 shiftTimeDict["color"] = "#01ff70";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "present";
+                shiftTimeDict["type"]  = "P";
             }
-            else if (attenShiftSlr == "pl")
+            else if (attenShiftSlr.CompareTo("paternity") == 0 || attenShiftSlr.ToLower() == "pl")
             {
                 shiftTimeDict["title"] = "Paternity";
                 shiftTimeDict["color"] = "#ffc107";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "paternity";
+                shiftTimeDict["type"] = "PL";
             }
-            else if (attenShiftSlr == "ml")
+            else if (attenShiftSlr.CompareTo("meternity") == 0 || attenShiftSlr.ToLower() == "ml")
             {
                 shiftTimeDict["title"] = "Maternity";
                 shiftTimeDict["color"] = "#ffc107";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "meternity";
+                shiftTimeDict["type"]  = "ML";
             }
             else if (attenShiftSlr == "hold")
             {
                 shiftTimeDict["title"] = "On Hold";
                 shiftTimeDict["color"] = "#ffc107";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "hold";
+                shiftTimeDict["type"]  = "HL";
                 // }else if($leave == 'os'){
                 //     return array('title' => 'Out Station', 'color' => '#b10000', 'leave' => $leave);
             }
-            else if (attenShiftSlr == "od")
+            else if (attenShiftSlr.CompareTo("out_station") == 0 || attenShiftSlr == "od" || attenShiftSlr == "os")
             {
                 shiftTimeDict["title"] = "Official Day Out";
                 shiftTimeDict["color"] = "#b10000";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "out_station";
+                shiftTimeDict["type"]  = "OSO";
             }
-            else if (attenShiftSlr == "mp")
+            else if (attenShiftSlr.CompareTo("away_day") == 0 || attenShiftSlr == "ad" )
+            {
+                shiftTimeDict["title"] = "Away Day";
+                shiftTimeDict["color"] = "#b10000";
+                shiftTimeDict["leave"] = "away_day";
+                shiftTimeDict["type"] = "ADO";
+            }
+            else if (attenShiftSlr.CompareTo("client_visit") == 0 || attenShiftSlr == "cv")
+            {
+                shiftTimeDict["title"] = "Client Visit";
+                shiftTimeDict["color"] = "#b10000";
+                shiftTimeDict["leave"] = "client_visit";
+                shiftTimeDict["type"] = "CVO";
+            }
+            else if (String.Equals(attenShiftSlr, "tp") || String.Equals(attenShiftSlr, "training"))
+            {
+                shiftTimeDict["title"] = "Training";
+                shiftTimeDict["color"] = "#b10000";
+                shiftTimeDict["leave"] = "trainig";
+                shiftTimeDict["type"]  = "TO";
+            }
+            else if (attenShiftSlr.CompareTo("missed") == 0 || attenShiftSlr == "mp")
             {
                 shiftTimeDict["title"] = "Missed";
                 shiftTimeDict["color"] = "#b10000";
-                shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["leave"] = "missed";
+                shiftTimeDict["type"] = "M";
                 // }else if($leave == 'Pen'){
                 //     return array('title' => 'Present', 'color' => '#01ff70', 'leave' => $leave);
             }
@@ -136,6 +171,7 @@ namespace AttendancesServices
                 shiftTimeDict["title"] = attenShiftSlr;
                 shiftTimeDict["color"] = "#ffc107";
                 shiftTimeDict["leave"] = attenShiftSlr;
+                shiftTimeDict["type"] = "U";
             }
             return shiftTimeDict;
         }

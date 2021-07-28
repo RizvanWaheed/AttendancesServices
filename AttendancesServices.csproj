@@ -11,6 +11,7 @@
     <Company>Alphabets</Company>
     <Product>HRM</Product>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
   <ItemGroup>

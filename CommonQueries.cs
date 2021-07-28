@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -308,6 +309,89 @@ namespace AttendancesServices
                 count = command.ExecuteNonQuery();
             }
             return count;
+        }
+
+
+
+        protected Dictionary<string, string> GetUserEmployee(string code, MySqlConnection conn)
+        {
+            // DateTime cardTime = Convert.ToDateTime(dateValue);
+
+            string employyeeUserQry = "SELECT `tbl_users`.`role_id`, `tbl_users`.`login`, `tbl_employees`.`id`, `tbl_employees`.`sap_code`, `tbl_employees`.`full_name`" +
+                " , GROUP_CONCAT(`tbl_setup_setups`.`sub_setup_id`) as slugid, GROUP_CONCAT(`tbl_setups`.`slug` SEPARATOR '') as slug ";
+            employyeeUserQry += " from tbl_employees ";
+            employyeeUserQry += " INNER JOIN `tbl_users` ON `tbl_users`.`employee_id` = `tbl_employees`.`id`";
+            employyeeUserQry += " LEFT JOIN `tbl_setup_setups` ON (`tbl_setup_setups`.`setup_id` = `tbl_users`.`role_id` and `tbl_setup_setups`.`type` =  'permissions_roles') ";
+            employyeeUserQry += " LEFT JOIN `tbl_setups` ON (`tbl_setups`.`id` = `tbl_setup_setups`.`sub_setup_id`) ";
+            employyeeUserQry += " where tbl_employees.status = 1 " +
+                " and (tbl_employees.sap_code = " + code + " or tbl_users.login = " + code + " )" +
+                " ORDER BY tbl_users.id desc, tbl_employees.id desc limit 1 ";
+
+
+            /*employyeeUserQry += " INNER JOIN `tbl_setup_settings` ON (`tbl_setup_settings`.`setup_id` = `tbl_employees`.`employment_type_id` " +
+                                                              " and `tbl_setup_settings`.`sub_setup_id` in (`tbl_employees`.`employment_type_id`) " +
+                                                              " and `tbl_setup_settings`.`type` = 'contract_campaigns'" +
+                                                              " and `tbl_setup_settings`.`field` = 'business_year' )";*/
+
+
+
+            Console.Write(" {0}\n", employyeeUserQry);
+            Dictionary<string, string> employeeUserDict = new Dictionary<string, string>();
+            // OpenConection();
+            using (MySqlCommand employeeUserCmd = new MySqlCommand(employyeeUserQry, conn))
+            {
+                // MySqlCommand employeeUserCmd = new MySqlCommand(employyeeUserQry, conn);
+                employeeUserCmd.CommandType = CommandType.Text;
+                using (MySqlDataReader attenUsrEmpRdr = employeeUserCmd.ExecuteReader())
+                {
+                    if (attenUsrEmpRdr.HasRows)
+                    {
+                        while (attenUsrEmpRdr.Read())
+                        {
+                            if (string.IsNullOrEmpty(attenUsrEmpRdr["login"].ToString()))
+                            {
+                                continue;
+                            }
+                            Console.WriteLine(string.Format("role_id = {0}", attenUsrEmpRdr["role_id"].ToString()));
+                            Console.WriteLine(string.Format("login = {0}", attenUsrEmpRdr["login"].ToString()));
+                            Console.WriteLine(string.Format("sap_code = {0}", attenUsrEmpRdr["sap_code"].ToString()));
+                            Console.WriteLine(string.Format("slug = {0}", attenUsrEmpRdr["slug"].ToString()));
+                            Console.WriteLine(string.Format("full_name = {0}", attenUsrEmpRdr["full_name"].ToString()));
+
+                            employeeUserDict["employee_id"] = attenUsrEmpRdr["id"].ToString();
+                            employeeUserDict["role_id"] = attenUsrEmpRdr["role_id"].ToString();
+                            employeeUserDict["asm_id"] = attenUsrEmpRdr["login"].ToString();
+                            employeeUserDict["sap_code"] = attenUsrEmpRdr["sap_code"].ToString();
+                            employeeUserDict["slug"] = attenUsrEmpRdr["slug"].ToString();
+                            employeeUserDict["name"] = attenUsrEmpRdr["full_name"].ToString();
+
+                            String slug = attenUsrEmpRdr["slug"].ToString();
+                            if (slug.Contains("DUAL"))
+                            {
+                                employeeUserDict["weeklyOff"] = "dual";
+                                employeeUserDict["working_hour"] = "09:00";
+                                employeeUserDict["working_hour_number"] = "9.0";
+                            }
+                            else if (slug.Contains("ALTER"))
+                            {
+                                employeeUserDict["weeklyOff"] = "alter";
+                                employeeUserDict["working_hour"] = "08:30";
+                                employeeUserDict["working_hour_number"] = "8.5";
+                            }
+                            else
+                            {
+                                employeeUserDict["weeklyOff"] = "single";
+                                employeeUserDict["working_hour"] = "08:00";
+                                employeeUserDict["working_hour_number"] = "8.0";
+                            }
+                        }
+                    }
+
+                }
+                // CloseConnection();
+            }
+            return employeeUserDict;
+
         }
 
     }

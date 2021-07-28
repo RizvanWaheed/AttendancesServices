@@ -117,11 +117,15 @@ namespace AttendancesServices
         }
         private DataSet GetKpiAttendanceQuery()
         {
-            string KpiSelectQry = "select `date`, `sip`, `asm_id`, `agent_time` As title, `tbl_attendances_kpi`.`shift_time`" +
-                ", `tbl_attendances_kpi`.`login`, `tbl_attendances_kpi`.`logout`, `tbl_users`.`employee_id`, `tbl_users`.`name` " +
+            string KpiSelectQry = "select `date`, `sip`, `asm_id`, SEC_TO_TIME( SUM( TIME_TO_SEC(`agent_time`))) As title" +
+                " , `tbl_attendances_kpi`.`shift_time`" +
+                " , `tbl_attendances_kpi`.`login`, `tbl_attendances_kpi`.`logout`, `tbl_users`.`employee_id`, `tbl_users`.`name` " +
                 " from tbl_attendances_kpi join tbl_users on (`tbl_attendances_kpi`.`asm_id` = `tbl_users`.`login`) " +
                 " where `tbl_attendances_kpi`.`date` >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' " +
                 " and `tbl_attendances_kpi`.`date` <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
+                " group by `date`, `asm_id` , `tbl_attendances_kpi`.`login`" +
+                ", `tbl_attendances_kpi`.`logout`,	`tbl_users`.`employee_id`,	`tbl_users`.`name` " +
+                ", `sip`, `tbl_attendances_kpi`.`shift_time`" +
                 "order by asm_id asc, date asc";//and asm_id = '7049'
 
             Console.Write(" {0}\n", KpiSelectQry);

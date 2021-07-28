@@ -80,7 +80,7 @@ namespace AttendancesServices
             leaveUsrEmpQry += " AND `kqz_card`.`CardTime` <= '" + localDate.ToString("yyyy-MM-dd HH:mm:ss") + "'  ";
             leaveUsrEmpQry += " ORDER BY `EmployeeCode` ASC, `CardTime` ASC";*/
 
-            string leaveUsrEmpQry = " select asm_id, start, end, total, type, tbl_leave_applications.status, am_approve" +
+            string leaveUsrEmpQry = " select asm_id, start, end, total, type, tbl_leave_applications.status, tbl_leave_applications.approve" +
                 " , span, tbl_leave_applications.role_id, tbl_users.name, tbl_users.employee_id " +
                 " from tbl_leave_applications inner join tbl_users on (tbl_users.login = tbl_leave_applications.asm_id) " +
                 " where  start >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' " +
@@ -151,8 +151,7 @@ namespace AttendancesServices
             IUvalues["applied"] = "1";
             IUvalues["proc"] = "Service";
             IUvalues["span"] = leaveRow["span"].ToString();
-            IUvalues["type"] = "L";
-            
+            IUvalues["type"] = leave["type"]; // "L";            
             IUvalues["date"] = date.ToString();
             IUvalues["asm_id"] = leaveRow["asm_id"].ToString();
 
