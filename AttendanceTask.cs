@@ -122,7 +122,7 @@ namespace AttendancesServices
         }
         public void RunWeeklyOff()
         {
-            WeeklyOff OffWeeks = new WeeklyOff(LocalMonthDate, LocalYesterday);
+           /* WeeklyOff OffWeeks = new WeeklyOff(LocalMonthDate, LocalYesterday);
             try
             {
                 OffWeeks.GetOffDays();
@@ -130,7 +130,7 @@ namespace AttendancesServices
             finally
             {
                 OffWeeks.Dispose();
-            }
+            }*/
         }
         public void RunAbsent()
         {

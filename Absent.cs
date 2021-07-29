@@ -32,20 +32,23 @@ namespace AttendancesServices
                 Console.WriteLine("Monthly Attendance Please check connection string");
             }
             // DictData = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
-            Console.WriteLine(".............................In Monthly Attendance..........................");
+            Console.WriteLine(".........................  In Monthly Attendance  ..........................");
         }
         public void RemoveAbsenties()
         {
             string DeleteQry = " Delete from tbl_attendances_machine ";
-            DeleteQry += " where type not in ('P','A','L','AL','CL','SL','HL') and date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' and date <= '" + localDate.ToString("yyyy-MM-dd") + "'";
+            DeleteQry += " where type not in ('U','L','R','A','M','O','T','G','C','HL','SL','CL','AL','ML','PL','CVO','ADO','WO','VO','OCO','OSO','TO') " +
+                        " and date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' " +
+                        " and date <= '" + localDate.ToString("yyyy-MM-dd") + "' ";
 
             // OpenConection();
             Console.Write(" {0}\n", DeleteQry);
             MySqlCommand command = new MySqlCommand(DeleteQry, conn);
-            if (command.ExecuteNonQuery() != 1)
-            {
+            if (command.ExecuteNonQuery() != 1){
+
                 //'handled as needed, //' but this snippet will throw an exception to force a rollback
                 //throw new InvalidProgramException();
+            
             }
             command.Dispose();
             return;
@@ -79,9 +82,9 @@ namespace AttendancesServices
 
                 for (DateTime todayDate = localMonthDate; todayDate < localDate; todayDate = todayDate.AddDays(1))
                 {
-                    //if ((todayDate.DayOfWeek == DayOfWeek.Sunday) || (todayDate.DayOfWeek == DayOfWeek.Saturday))
-                    //{
-                        //OpenConection();
+                    // if ((todayDate.DayOfWeek == DayOfWeek.Sunday) || (todayDate.DayOfWeek == DayOfWeek.Saturday))
+                    // {
+                    // OpenConection();
                     SelectChecked = "select count(*) from tbl_attendances_machine where asm_id = " + SelectCheckRdr["asm_id"] + " and date = '" + todayDate.ToString("yyyy-MM-dd") + "'"; //" and sap_code = " + item.Key +
                     Console.Write(" {0}\n", SelectChecked);
                     using (MySqlCommand SelectCheckedCommand = new MySqlCommand(SelectChecked, conn))
@@ -102,8 +105,6 @@ namespace AttendancesServices
                         {
                             SetWeeklyOffData(WeeklyData, todayDate);
                         }
-                       
-
                     }
                   //  }
                 }
@@ -116,7 +117,10 @@ namespace AttendancesServices
         }
         private DataTable UsersList()
         {
-            string SelectCheck = "select count(*) cnt, asm_id from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' and date <= '" + localDate.ToString("yyyy-MM-dd") + "' group by asm_id";
+            string SelectCheck = "select count(*) cnt, asm_id from tbl_attendances_machine " +
+                                   " where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' " +
+                                    "  and date <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
+                                    " group by asm_id";
             Console.Write(" {0}\n", SelectCheck);
             DataTable SelectCheckDt = new DataTable();
 

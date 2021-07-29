@@ -81,16 +81,17 @@ namespace AttendancesServices
                                 string form = SelectCheckedInRdr["form"].ToString();
                                 if ((form.Contains("weekly_off") && form.Contains(employeeUserDict["weeklyOff"])) || form.Contains("volunteer"))
                                 {
-                                    IUvalues["type"] = "WO";
-                                    if (form.Contains("volunteer"))
-                                    {
-                                        IUvalues["type"] = "VO";
-                                    }
+                                    Dictionary<string, string> leave = GetLeaveEntitle(form);
+                                    
+                                    IUvalues["type"] = leave["type"];
+                                    IUvalues["color"] = leave["color"];
+                                    /* IUvalues["title"] = leave["title"];
+                                    IUvalues["color"] = leave["color"];*/                                   
+                                    
                                     IUvalues["employee_id"] = employeeUserDict["employee_id"];
                                     IUvalues["name"] = employeeUserDict["name"];
                                     IUvalues["asm_id"] = SelectCheckRdr["asm_id"].ToString();
-                                    IUvalues["sap_code"] = SelectCheckRdr["asm_id"].ToString();
-                                    IUvalues["color"] = "#07d4a1";
+                                    IUvalues["sap_code"] = SelectCheckRdr["asm_id"].ToString();                                    
                                     IUvalues["applied"] = "0";
                                     IUvalues["span"] = "0";
                                     IUvalues["proc"] = "Service";

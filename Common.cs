@@ -78,14 +78,14 @@ namespace AttendancesServices
                 shiftTimeDict["leave"] = "off_call";
                 shiftTimeDict["type"]  = "OCO";
             }
-            else if (attenShiftSlr.CompareTo("volunteer") == 0 || attenShiftSlr.CompareTo("vl") == 0) //(attenShiftSlr == "vl")
+            else if (attenShiftSlr.CompareTo("volunteer") == 0 || attenShiftSlr.Contains("volunteer")  || attenShiftSlr.CompareTo("vl") == 0) //(attenShiftSlr == "vl")
             {
                 shiftTimeDict["title"] = "Volunteer";
                 shiftTimeDict["color"] = "#dc3545";
                 shiftTimeDict["leave"] = "volunteer";
                 shiftTimeDict["type"]  = "VO";
             }
-            else if (attenShiftSlr.CompareTo("weekly_off") == 0 || attenShiftSlr.ToLower() == "off") // ()
+            else if (attenShiftSlr.CompareTo("weekly_off") == 0 || attenShiftSlr.Contains("weekly_off") || attenShiftSlr.ToLower() == "off") // ()
             {
                 shiftTimeDict["title"] = "Weekly Off";
                 shiftTimeDict["color"] = "#07d4a1";
