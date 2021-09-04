@@ -10,9 +10,9 @@ namespace AttendancesServices
 {
     sealed class WeeklyOff: CommonQueries, IDisposable
     {
-        private DateTime localDate;
-        private DateTime localMonthDate;
-        private MySqlConnection conn;
+        private readonly DateTime localDate;
+        private readonly DateTime localMonthDate;
+        private readonly MySqlConnection conn;
 
         // private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
         public WeeklyOff(DateTime From, DateTime To)
@@ -72,7 +72,7 @@ namespace AttendancesServices
                 {
                     if ((todayDate.DayOfWeek == DayOfWeek.Sunday) || (todayDate.DayOfWeek == DayOfWeek.Saturday))
                     {
-                        Dictionary<string, string> WeeklyData = new Dictionary<string, string>();
+                        Dictionary<string, string> WeeklyData = new ();
 
                         WeeklyData["asm_id"] = SelectCheckRdr["asm_id"].ToString();
                         WeeklyData["color"] = "#07d4a1";
@@ -171,9 +171,9 @@ namespace AttendancesServices
         {
             string SelectCheck = "select count(*) cnt, asm_id from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' and date <= '" + localDate.ToString("yyyy-MM-dd") + "' group by asm_id";
             Console.Write(" {0}\n", SelectCheck);
-            DataTable SelectCheckDt = new DataTable();
+            DataTable SelectCheckDt = new ();
             
-            using (MySqlCommand SelectCheckCmd = new MySqlCommand(SelectCheck, conn))
+            using (MySqlCommand SelectCheckCmd = new (SelectCheck, conn))
             {
                 SelectCheckCmd.CommandType = CommandType.Text;
                 MySqlDataReader SelectCheckRdr = SelectCheckCmd.ExecuteReader();
@@ -185,7 +185,7 @@ namespace AttendancesServices
         private Dictionary<string, string> GetUserEmployeeOffDays( string code)//
         {
             // DateTime cardTime = Convert.ToDateTime(dateValue);
-            Dictionary<string, string> employeeUserDict = new Dictionary<string, string>();
+            Dictionary<string, string> employeeUserDict = new ();
 
             string employyeeUserQry = "SELECT  `tbl_employees`.`id`, `tbl_users`.`role_id`, `tbl_users`.`login`, `tbl_employees`.`sap_code`, `tbl_employees`.`full_name`, `tbl_setups`.`slug` ";
             employyeeUserQry += " from tbl_employees ";
@@ -198,7 +198,7 @@ namespace AttendancesServices
             // Console.Write(" {0}\n", employyeeUserQry);
 
 
-            using (MySqlCommand employeeUserCmd = new MySqlCommand(employyeeUserQry, conn))
+            using (MySqlCommand employeeUserCmd = new (employyeeUserQry, conn))
             {
                 employeeUserCmd.CommandType = CommandType.Text;
                 using (MySqlDataReader attenUsrEmpRdr = employeeUserCmd.ExecuteReader())
@@ -325,7 +325,7 @@ namespace AttendancesServices
 
             // OpenConection();
             Console.Write(" {0}\n", InsertUpdateQry);
-            MySqlCommand command = new MySqlCommand(InsertUpdateQry, conn);
+            MySqlCommand command = new (InsertUpdateQry, conn);
             if (command.ExecuteNonQuery() != 1)
             {
                 //'handled as needed, //' but this snippet will throw an exception to force a rollback

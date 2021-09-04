@@ -24,7 +24,7 @@ namespace AttendancesServices
                 " and WEEKDAY(date) = '"+ dayofweek + "'";
 
             Console.Write(" {0}\n", SelectCheck);
-            using (MySqlCommand SelectCheckCommand = new MySqlCommand(SelectCheck, conn))
+            using (MySqlCommand SelectCheckCommand = new (SelectCheck, conn))
             {
                 count = (long)SelectCheckCommand.ExecuteScalar();
             }
@@ -35,32 +35,32 @@ namespace AttendancesServices
             SelectCheck = "select count(*) from tbl_attendances_machine where asm_id = " + AsmID + " and date = '" + Convert.ToDateTime(DateA).ToString("yyyy-MM-dd") + "'";
 
             Console.Write(" {0}\n", SelectCheck);
-            using (MySqlCommand SelectCheckCommand = new MySqlCommand(SelectCheck, conn))
+            using (MySqlCommand SelectCheckCommand = new (SelectCheck, conn))
             {
                 count = (long)SelectCheckCommand.ExecuteScalar();
             }
             return count;
         }
-        public long AttendaceInsertOrUpdate(MySqlConnection conn, string Qry, long count)
+        public static long AttendaceInsertOrUpdate(MySqlConnection conn, string Qry, long count)
         {
 
-            using (MySqlCommand command = new MySqlCommand(Qry, conn))
+            using (MySqlCommand command = new (Qry, conn))
             {
                 count = command.ExecuteNonQuery();
             }
             return count;
         }
-        public long AttendaceInsertUpdate(MySqlConnection conn, string Qry, long count)
+        public static long AttendaceInsertUpdate(MySqlConnection conn, string Qry, long count)
         {
-            using (MySqlCommand command = new MySqlCommand(Qry, conn))
+            using (MySqlCommand command = new (Qry, conn))
             {
                 count = command.ExecuteNonQuery();
             }
             return count;
         }
-        public long AttendaceInsert(MySqlConnection conn, Dictionary<string,string> dictInner, long count)
+        public static long AttendaceInsert(MySqlConnection conn, Dictionary<string,string> dictInner, long count)
         {
-            string InsertUpdateQry = string.Empty;
+            string InsertUpdateQry;
             string insertColumns = " asm_id, date  ";
             string insertValues = " "+ dictInner["asm_id"] + ", '" + Convert.ToDateTime(dictInner["date"]).ToString("yyyy-MM-dd") + "' ";
 
@@ -196,16 +196,16 @@ namespace AttendancesServices
 
             Console.Write(" {0}\n", InsertUpdateQry);
 
-            using (MySqlCommand command = new MySqlCommand(InsertUpdateQry, conn))
+            using (MySqlCommand command = new (InsertUpdateQry, conn))
             {
                 count = command.ExecuteNonQuery();
             }
             return count;
         }
-        public long AttendaceUpdate(MySqlConnection conn, Dictionary<string, string> dictInner, long count)
+        public static long AttendaceUpdate(MySqlConnection conn, Dictionary<string, string> dictInner, long count)
         {
             string updateColumns = " type = '" + dictInner["type"] + "' ";
-            string InsertUpdateQry = string.Empty;
+            string InsertUpdateQry;
 
             if (!string.IsNullOrEmpty(dictInner["proc"]))
             {
@@ -304,7 +304,7 @@ namespace AttendancesServices
 
             Console.Write(" {0}\n", InsertUpdateQry);
 
-            using (MySqlCommand command = new MySqlCommand(InsertUpdateQry, conn))
+            using (MySqlCommand command = new (InsertUpdateQry, conn))
             {
                 count = command.ExecuteNonQuery();
             }
@@ -313,7 +313,7 @@ namespace AttendancesServices
 
 
 
-        protected Dictionary<string, string> GetUserEmployee(string code, MySqlConnection conn)
+        protected static Dictionary<string, string> GetUserEmployee(string code, MySqlConnection conn)
         {
             // DateTime cardTime = Convert.ToDateTime(dateValue);
 
@@ -336,9 +336,9 @@ namespace AttendancesServices
 
 
             Console.Write(" {0}\n", employyeeUserQry);
-            Dictionary<string, string> employeeUserDict = new Dictionary<string, string>();
+            Dictionary<string, string> employeeUserDict = new ();
             // OpenConection();
-            using (MySqlCommand employeeUserCmd = new MySqlCommand(employyeeUserQry, conn))
+            using (MySqlCommand employeeUserCmd = new (employyeeUserQry, conn))
             {
                 // MySqlCommand employeeUserCmd = new MySqlCommand(employyeeUserQry, conn);
                 employeeUserCmd.CommandType = CommandType.Text;

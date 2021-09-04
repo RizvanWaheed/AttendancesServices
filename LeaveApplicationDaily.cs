@@ -2,13 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    sealed class LeaveApplication :  CommonQueries, IDisposable
+    sealed class LeaveApplicationDaily : CommonQueries, IDisposable
     {
         private readonly DateTime localDate;
         private readonly DateTime localMonthDate;
@@ -16,25 +14,25 @@ namespace AttendancesServices
         Dictionary<string, string> IUvalues;
 
         // private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
-        public LeaveApplication(DateTime From, DateTime To)
+        public LeaveApplicationDaily(DateTime From, DateTime To)
         {
             localDate = To;
             localMonthDate = From;
-            
+
             conn = DatabaseConnection.GetDBConnection();
             conn.Open();
 
             var temp = conn.State.ToString();
             if (temp == "Open")//sqlCon.State == ConnectionState.Open && 
             {
-                Console.WriteLine("Leave Application Connection working.");
+                Console.WriteLine("Leave Application Daily Connection working.");
             }
             else
             {
-                Console.WriteLine("Leave Application Please check connection string");
+                Console.WriteLine("Leave Application Daily Please check connection string");
             }
             // DictData = new Dictionary<string, Dictionary<string, Dictionary<string, string>>>();
-            Console.WriteLine(".............................In Leave Application Attendance..........................");
+            Console.WriteLine(".............................In Leave Application Daily Attendance..........................");
         }
         public void GetLeaveApplications()
         {
@@ -73,28 +71,18 @@ namespace AttendancesServices
 
         private DataSet GetLeavesEmployeeUsers()
         {
-            /*
-             * string leaveUsrEmpQry = " SELECT `kqz_employee`.`EmployeeCode`, `kqz_card`.`CardTime` ";
-            leaveUsrEmpQry += " FROM `kqz_employee`	INNER JOIN `kqz_card` ON `kqz_employee`.`EmployeeID` = `kqz_card`.`EmployeeID` ";
-            leaveUsrEmpQry += " WHERE `kqz_card`.`CardTime` >= '" + localMonthDate.ToString("yyyy-MM-dd HH:mm:ss") + "' ";
-            leaveUsrEmpQry += " AND `kqz_card`.`CardTime` <= '" + localDate.ToString("yyyy-MM-dd HH:mm:ss") + "'  ";
-            leaveUsrEmpQry += " ORDER BY `EmployeeCode` ASC, `CardTime` ASC";*/
-
             string leaveUsrEmpQry = " select asm_id, start, end, total, type, tbl_leave_applications.status, tbl_leave_applications.approve" +
                 " , span, tbl_leave_applications.role_id, tbl_users.name, tbl_users.employee_id " +
                 " from tbl_leave_applications inner join tbl_users on (tbl_users.login = tbl_leave_applications.asm_id) " +
-                " where  start >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' " +
-                " and end <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
+                " where  ((`tbl_leave_applications`.`created_at` >= '" + localMonthDate.ToString("yyyy-MM-dd HH:mm:ss") + "' " +
+                " and `tbl_leave_applications`.`created_at` <= '" + localDate.ToString("yyyy-MM-dd HH:mm:ss") + "' ) " +
+                " or (`tbl_leave_applications`.`updated_at` >= '" + localMonthDate.ToString("yyyy-MM-dd HH:mm:ss") + "' " +
+                " and `tbl_leave_applications`.`updated_at` <= '" + localDate.ToString("yyyy-MM-dd HH:mm:ss") + "'))  " +
                 " and tbl_leave_applications.status not in (0, 3) ";
 
             Console.Write(" {0}\n", leaveUsrEmpQry);
 
-            // OpenConection();
-            // MySqlCommand leaveUsrEmp = new MySqlCommand(leaveUsrEmpQry, conn); 
             DataSet leaveUsrEmpDS = new ();
-            // DataTable leaveUsrEmpDT = new DataTable();
-            // MySqlDataReader leaveUsrEmpRdr;
-
             try
             {
                 // Way 1
@@ -110,7 +98,8 @@ namespace AttendancesServices
                 // Way 3
                 using (MySqlCommand leaveUsrEmp = new (leaveUsrEmpQry, conn))
                 {
-                    using (MySqlDataAdapter leaveUsrEmpDA = new (leaveUsrEmp)) {
+                    using (MySqlDataAdapter leaveUsrEmpDA = new (leaveUsrEmp))
+                    {
                         leaveUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                         // leaveUsrEmpDA.Fill(leaveUsrEmpDT);
                         leaveUsrEmpDA.Fill(leaveUsrEmpDS, "Leaves");
@@ -131,19 +120,13 @@ namespace AttendancesServices
         }
         private long SetLeavesData(DateTime date, DataRow leaveRow)
         {
-          /*  string InsertUpdateQry;
-            string insertColumns = string.Empty;
-            string insertValues = string.Empty;
-            string updateColumns = " proc = 'Service' ";
-            string type = leaveRow["type"].ToString();*/
-
+            
             IUvalues = new Dictionary<string, string>();
             long count = 0;
             count = AttendanceAsmidAndDateWiseExist(conn, leaveRow["asm_id"].ToString(), date.ToString(), count);
 
             Dictionary<string, string> leave = GetLeaveEntitle(leaveRow["type"].ToString());
-            /* shiftTimeDict["leave"] = attenShiftSlr; */
-
+            
             IUvalues["color"] = leave["color"];
             IUvalues["name"] = leaveRow["name"].ToString();
             IUvalues["employee_id"] = leaveRow["employee_id"].ToString();
@@ -173,7 +156,7 @@ namespace AttendancesServices
                 IUvalues["Intime"] = "00:00:00";
                 IUvalues["shifttime"] = "00:00:00";
                 IUvalues["ShiftDatetime"] = Convert.ToDateTime(date).ToString("yyyy-MM-dd");
-                
+
 
                 AttendaceInsert(conn, IUvalues, count);
             }
@@ -181,21 +164,17 @@ namespace AttendancesServices
             {
                 AttendaceUpdate(conn, IUvalues, count);
             }
-    
+
             // CloseConnection();
             return count;
         }
         public void Dispose()
         {
-            // Using the dispose pattern
-            // Dispose(true);
-            // … release unmanaged resources here
             conn.Close();
             conn.Dispose();
             GC.SuppressFinalize(this);
-
         }
-        ~LeaveApplication()
+        ~LeaveApplicationDaily()
         {
             conn.Close();
             conn.Dispose();

@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    sealed class Gazetted: CommonQueries, IDisposable
+    sealed class LeaveGazetted: CommonQueries, IDisposable
     {
-        private DateTime localDate; // = DateTime.Now.AddDays(-1);
-        private DateTime localMonthDate; // = DateTime.Now.AddMonths(-2);
-        private MySqlConnection conn;
+        private readonly DateTime localDate; // = DateTime.Now.AddDays(-1);
+        private readonly DateTime localMonthDate; // = DateTime.Now.AddMonths(-2);
+        private readonly MySqlConnection conn;
         // private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
-        public Gazetted(DateTime From, DateTime To)
+        public LeaveGazetted(DateTime From, DateTime To)
         {
             localDate = To;
             localMonthDate = From;
@@ -47,19 +47,19 @@ namespace AttendancesServices
             Console.Write(" {0}\n", SelectCheckedIn);
 
             //OpenConection();
-            DataTable SelectCheckedInDT = new DataTable();
+            DataTable SelectCheckedInDT = new ();
             Dictionary<string, string> employeeUserDict;
 
-            using (MySqlCommand SelectCheckedInCmd = new MySqlCommand(SelectCheckedIn, conn))
+            using (MySqlCommand SelectCheckedInCmd = new (SelectCheckedIn, conn))
             {
-                using (MySqlDataAdapter attenUsrEmpDA = new MySqlDataAdapter(SelectCheckedInCmd))  //using (MySqlDataReader SelectCheckedInRdr = SelectCheckedInCmd.ExecuteReader())
+                using (MySqlDataAdapter attenUsrEmpDA = new (SelectCheckedInCmd))  //using (MySqlDataReader SelectCheckedInRdr = SelectCheckedInCmd.ExecuteReader())
                 {
                     attenUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                     attenUsrEmpDA.Fill(SelectCheckedInDT);
 
                     //string SelectChecked = string.Empty;
 
-                    Dictionary<string, string> IUvalues = new Dictionary<string, string>();
+                    Dictionary<string, string> IUvalues = new ();
                     // Dictionary<string, string> EmployeeUserDict = new Dictionary<string, string>();
 
                     foreach (DataRow SelectCheckedInRdr in SelectCheckedInDT.Rows) //if (SelectCheckedInRdr.HasRows)
@@ -133,9 +133,9 @@ namespace AttendancesServices
         {
             string SelectCheck = "select count(*) cnt, asm_id from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' and date <= '" + localDate.ToString("yyyy-MM-dd") + "' group by asm_id";
             Console.Write(" {0}\n", SelectCheck);
-            DataTable SelectCheckDt = new DataTable();
+            DataTable SelectCheckDt = new ();
 
-            using (MySqlCommand SelectCheckCmd = new MySqlCommand(SelectCheck, conn))
+            using (MySqlCommand SelectCheckCmd = new (SelectCheck, conn))
             {
                 SelectCheckCmd.CommandType = CommandType.Text;
                 MySqlDataReader SelectCheckRdr = SelectCheckCmd.ExecuteReader();
@@ -156,7 +156,7 @@ namespace AttendancesServices
             GC.SuppressFinalize(this);
 
         }
-        ~Gazetted()
+        ~LeaveGazetted()
         {
             conn.Close();
             conn.Dispose();

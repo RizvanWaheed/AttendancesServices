@@ -9,15 +9,15 @@ namespace AttendancesServices
 {
     class Common
     {
-        protected IEnumerable<DateTime> EachDay(DateTime from, DateTime thru)
+        protected static IEnumerable<DateTime> EachDay(DateTime from, DateTime thru)
         {
             for (var day = from.Date; day.Date <= thru.Date; day = day.AddDays(1))
                 yield return day;
         }
-        protected int GetWeekNumberOfMonth(DateTime date)
+        protected static int GetWeekNumberOfMonth(DateTime date)
         {
             date = date.Date;
-            DateTime firstMonthDay = new DateTime(date.Year, date.Month, 1);
+            DateTime firstMonthDay = new (date.Year, date.Month, 1);
             DateTime firstMonthMonday = firstMonthDay.AddDays((DayOfWeek.Monday + 7 - firstMonthDay.DayOfWeek) % 7);
             if (firstMonthMonday > date)
             {
@@ -26,9 +26,9 @@ namespace AttendancesServices
             }
             return (date - firstMonthMonday).Days / 7 + 1;
         }
-        protected int NumberOfParticularDaysInMonth(int year, int month, DayOfWeek dayOfWeek)
+        protected static int NumberOfParticularDaysInMonth(int year, int month, DayOfWeek dayOfWeek)
         {
-            DateTime startDate = new DateTime(year, month, 1);
+            DateTime startDate = new (year, month, 1);
             int totalDays = startDate.AddMonths(1).Subtract(startDate).Days;
 
             int answer = Enumerable.Range(1, totalDays)
@@ -43,9 +43,9 @@ namespace AttendancesServices
             return start.GetDaysInBetween(end, inclusive: true).Count(d => d.DayOfWeek == DayOfWeek.Monday);
 
         }*/
-        protected Dictionary<string, string> GetLeaveEntitle(string attenShiftSlr)
+        protected static Dictionary<string, string> GetLeaveEntitle(string attenShiftSlr)
         {
-            Dictionary<string, string> shiftTimeDict = new Dictionary<string, string>();
+            Dictionary<string, string> shiftTimeDict = new ();
             
 
             //if (!string.IsNullOrEmpty(attenShiftSlr))

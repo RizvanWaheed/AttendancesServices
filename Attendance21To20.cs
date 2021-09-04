@@ -11,9 +11,10 @@ namespace AttendancesServices
     sealed class Attendance21To20 : Common, IDisposable
     {
         private DateTime Start, End, Start1, End1;
+        private int dayz1, dayz;
         private readonly DateTime localDate = DateTime.Now;
-        private readonly DateTime localMonthDate = DateTime.Now.AddMonths(-2);
-        private MySqlConnection conn;
+        // private readonly DateTime localMonthDate = DateTime.Now.AddMonths(-2);
+        private readonly MySqlConnection conn;
         // private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
         public Attendance21To20()
         {
@@ -49,25 +50,26 @@ namespace AttendancesServices
 
             Start = new DateTime(localDate.AddMonths(-1).Year, localDate.AddMonths(-1).Month, 21);
             End = new DateTime(localDate.Year, localDate.Month, 20);
-
-            LinkageMonthAttendance(Start1, End1);
-            LinkageMonthAttendance(Start, End);
+            dayz1 = DateTime.DaysInMonth(Start1.Year, Start1.Month);
+            dayz = DateTime.DaysInMonth(Start.Year, Start.Month);
+            LinkageMonthAttendance(Start1, End1, dayz1);
+            LinkageMonthAttendance(Start, End, dayz);
 
             return;
         }
-        private void LinkageMonthAttendance(DateTime M1, DateTime M2)
+        private void LinkageMonthAttendance(DateTime M1, DateTime M2, int dyz)
         {
             DataSet attendanceDS = GetMonthWiseAgentsAttendance(M1, M2);
 
             foreach (DataRow campaignRow in attendanceDS.Tables["AttendanceMonth"].Rows)//campaignDS.Tables["Customers"].Rows
             {
-                MonthlyInsertAndUpdate(campaignRow, M1, M2);
+                MonthlyInsertAndUpdate(campaignRow, M1, M2, dyz);
             }
         }
         private DataSet GetMonthWiseAgentsAttendance(DateTime M1, DateTime M2)//
         {
             // DateTime cardTime = Convert.ToDateTime(dateValue);
-            Dictionary<string, string> employeeUserDict = new Dictionary<string, string>();
+            // Dictionary<string, string> employeeUserDict = new ();
             string AttendanceMonthlyQry = " select asm_id, name " +
                 ", count(*) cunt " +
                 ", sum(case when type = 'P' then 1 else 0 end) as pres" +
@@ -85,7 +87,7 @@ namespace AttendancesServices
                 " group by asm_id";
 
             Console.Write(" {0}\n", AttendanceMonthlyQry);
-            DataSet attenUsrEmpDS = new DataSet();
+            DataSet attenUsrEmpDS = new ();
             try
             {
                 // Way 1
@@ -99,9 +101,9 @@ namespace AttendancesServices
                 // attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
 
                 // Way 3
-                using (MySqlCommand attenUsrEmp = new MySqlCommand(AttendanceMonthlyQry, conn))
+                using (MySqlCommand attenUsrEmp = new (AttendanceMonthlyQry, conn))
                 {
-                    using (MySqlDataAdapter attenUsrEmpDA = new MySqlDataAdapter(attenUsrEmp))
+                    using (MySqlDataAdapter attenUsrEmpDA = new (attenUsrEmp))
                     {
                         attenUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                         attenUsrEmpDA.Fill(attenUsrEmpDS, "AttendanceMonth");
@@ -117,7 +119,7 @@ namespace AttendancesServices
 
             return attenUsrEmpDS;
         }
-        private long MonthlyInsertAndUpdate(DataRow attenUsrEmpRdr, DateTime M1, DateTime M2)
+        private long MonthlyInsertAndUpdate(DataRow attenUsrEmpRdr, DateTime M1, DateTime M2, int dyz)
         {
             string InsertUpdateQry;
             string SelectCheck = "select count(*) from tbl_attendances_months " +
@@ -129,14 +131,14 @@ namespace AttendancesServices
             Console.Write(" {0}\n", SelectCheck);
             long count = 0;
 
-            using (MySqlCommand SelectCheckCommand = new MySqlCommand(SelectCheck, conn))
+            using (MySqlCommand SelectCheckCommand = new (SelectCheck, conn))
             {
                 count = (long)SelectCheckCommand.ExecuteScalar();
             }
             if (count <= 0)
             {
 
-                InsertUpdateQry = " INSERT INTO tbl_attendances_months ( asm_id, name, from_date, to_date, cunt, pres, abse, leve, off, tran, gazz, mon, yr, dayz, lesstime, latearrival, missed ) ";
+                InsertUpdateQry = " INSERT INTO tbl_attendances_months ( asm_id, name, from_date, to_date, cunt, pres, abse, leve, off, tran, gazz, mon, yr, dayz, lesstime, latearrival, missed, total ) ";
                 InsertUpdateQry += " values ( '" + attenUsrEmpRdr["asm_id"].ToString() + "' , '" + attenUsrEmpRdr["name"].ToString() + "' ,'" + M1.ToString("yyyy-MM-dd") + "' " +
                     ", '" + M2.ToString("yyyy-MM-dd") + "' " +
                     ", '" + attenUsrEmpRdr["cunt"].ToString() + "' " +
@@ -151,7 +153,8 @@ namespace AttendancesServices
                     ", 'sal' " +
                     ", '" + attenUsrEmpRdr["lesstime"].ToString() + "' " +
                     ", '" + attenUsrEmpRdr["latearrival"].ToString() + "' " +
-                    ", '" + attenUsrEmpRdr["missed"].ToString() + "' )";
+                    ", '" + attenUsrEmpRdr["missed"].ToString() + "'" +
+                    ", '" + dyz + "' )";
             }
             else
             {
@@ -178,6 +181,7 @@ namespace AttendancesServices
                     ", gazz = '" + attenUsrEmpRdr["gazz"].ToString() + "' " +
                     ", mon = '" + M2.Month + "' " +
                     ", yr = '" + M2.Year + "' " +
+                    ", total = '" + dyz + "' " +
                     ", lesstime = '" + attenUsrEmpRdr["lesstime"].ToString() + "' " +
                     ", latearrival = '" + attenUsrEmpRdr["latearrival"].ToString() + "' " +
                     ", missed = '" + attenUsrEmpRdr["missed"].ToString() + "' ";
@@ -191,7 +195,7 @@ namespace AttendancesServices
 
             Console.Write(" {0}\n", InsertUpdateQry);
 
-            using (MySqlCommand command = new MySqlCommand(InsertUpdateQry, conn))
+            using (MySqlCommand command = new (InsertUpdateQry, conn))
             {
                 count = command.ExecuteNonQuery();
             }

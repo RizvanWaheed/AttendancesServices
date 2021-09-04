@@ -26,7 +26,7 @@ namespace AttendancesServices
             //Configuring the one to many relationship
 
             modelBuilder.Entity<AttendancesMachine>()
-                    .HasKey(e => new { e.asm_id, e.date }); //, e => e.date
+                    .HasKey(e => new { e.AsmId, e.Date }); //, e => e.date
 
             /* modelBuilder.Entity<Employee>()
                  .HasOne<Department>(e => e.Department)

@@ -11,9 +11,10 @@ namespace AttendancesServices
     sealed class AttendanceMonthly : Common, IDisposable
     {
         private DateTime Start, End, Start1, End1, Start2, End2;
+        private int dayz2, dayz1, dayz;
         private readonly DateTime localDate = DateTime.Now;
-        private readonly DateTime localMonthDate = DateTime.Now.AddMonths(-2);
-        private MySqlConnection conn;
+        // private readonly DateTime localMonthDate = DateTime.Now.AddMonths(-2);
+        private readonly MySqlConnection conn;
         // private DateTime start = new DateTime((int)localDate.Year, (int)LocalDate.Months, 1);
 
         // private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
@@ -45,31 +46,34 @@ namespace AttendancesServices
             LinkageMonthAttendance(Start3, End3);*/
 
             Start2 = new DateTime(localDate.AddMonths(-2).Year, localDate.AddMonths(-2).Month, 1);
+            dayz2 = DateTime.DaysInMonth(Start2.Year, Start2.Month);
             End2 = new DateTime(localDate.AddMonths(-2).Year, localDate.AddMonths(-2).Month, DateTime.DaysInMonth(localDate.AddMonths(-2).Year, localDate.AddMonths(-2).Month));
-            LinkageMonthAttendance(Start2, End2);
+            LinkageMonthAttendance(Start2, End2, dayz2);
 
             Start1 = new DateTime(localDate.AddMonths(-1).Year, localDate.AddMonths(-1).Month, 1);
+            dayz1 = DateTime.DaysInMonth(Start1.Year, Start1.Month);
             End1 = new DateTime(localDate.AddMonths(-1).Year, localDate.AddMonths(-1).Month, DateTime.DaysInMonth(localDate.AddMonths(-1).Year, localDate.AddMonths(-1).Month));
-            LinkageMonthAttendance(Start1, End1);
+            LinkageMonthAttendance(Start1, End1, dayz1);
 
             Start = new DateTime(localDate.Year, localDate.Month, 1);
+            dayz = DateTime.DaysInMonth(Start.Year, Start.Month);
             End = DateTime.Now;
-            LinkageMonthAttendance(Start, End);
+            LinkageMonthAttendance(Start, End, dayz);
             // return;
         }
-        private void LinkageMonthAttendance(DateTime M1, DateTime M2)
+        private void LinkageMonthAttendance(DateTime M1, DateTime M2, int day)
         {
             DataSet attendanceDS =  GetMonthWiseAgentsAttendance(M1, M2);
             
             foreach (DataRow campaignRow in attendanceDS.Tables["AttendanceMonth"].Rows)//campaignDS.Tables["Customers"].Rows
             {
-                MonthlyInsertAndUpdate(campaignRow, M1, M2);
+                MonthlyInsertAndUpdate(campaignRow, M1, M2, day);
             }
         }
         private DataSet GetMonthWiseAgentsAttendance(DateTime M1, DateTime M2)//
         {
             // DateTime cardTime = Convert.ToDateTime(dateValue);
-            Dictionary<string, string> employeeUserDict = new Dictionary<string, string>();
+            // Dictionary<string, string> employeeUserDict = new ();
             string AttendanceMonthlyQry = " select asm_id, year(date) as yr, month(date) as mon" +
                 ", count(*) cunt, name " +
                 ", sum(case when type = 'P' then 1 else 0 end) as pres " +
@@ -86,7 +90,7 @@ namespace AttendancesServices
                 " group by asm_id, year(date), month(date)";
 
             Console.Write(" {0}\n", AttendanceMonthlyQry);
-            DataSet attenUsrEmpDS = new DataSet();
+            DataSet attenUsrEmpDS = new ();
             try
             {
                 // Way 1
@@ -100,9 +104,9 @@ namespace AttendancesServices
                 // attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
 
                 // Way 3
-                using (MySqlCommand attenUsrEmp = new MySqlCommand(AttendanceMonthlyQry, conn))
+                using (MySqlCommand attenUsrEmp = new (AttendanceMonthlyQry, conn))
                 {
-                    using (MySqlDataAdapter attenUsrEmpDA = new MySqlDataAdapter(attenUsrEmp))
+                    using (MySqlDataAdapter attenUsrEmpDA = new (attenUsrEmp))
                     {
                         attenUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                         attenUsrEmpDA.Fill(attenUsrEmpDS, "AttendanceMonth");
@@ -175,7 +179,7 @@ namespace AttendancesServices
             // CloseConnection();
             return employeeUserDict;*/
         }
-        private long MonthlyInsertAndUpdate(DataRow attenUsrEmpRdr, DateTime M1, DateTime M2)
+        private long MonthlyInsertAndUpdate(DataRow attenUsrEmpRdr, DateTime M1, DateTime M2, int day)
         {
             string InsertUpdateQry;
             string SelectCheck = "select count(*) from tbl_attendances_months where asm_id =" + attenUsrEmpRdr["asm_id"] + " and yr = " + attenUsrEmpRdr["yr"] + " and mon = " + attenUsrEmpRdr["mon"] + " and dayz = 'kpi' ";
@@ -183,14 +187,14 @@ namespace AttendancesServices
             Console.Write(" {0}\n", SelectCheck);
             long count = 0;
 
-            using (MySqlCommand SelectCheckCommand = new MySqlCommand(SelectCheck, conn))
+            using (MySqlCommand SelectCheckCommand = new (SelectCheck, conn))
             {
                 count = (long)SelectCheckCommand.ExecuteScalar();
             }
             if (count <= 0)
             {
 
-                InsertUpdateQry = " INSERT INTO tbl_attendances_months ( asm_id, name, yr, mon, cunt, pres, abse, leve, off, tran, gazz, from_date, to_date, dayz, lesstime, latearrival, missed ) ";
+                InsertUpdateQry = " INSERT INTO tbl_attendances_months ( asm_id, name, yr, mon, cunt, pres, abse, leve, off, tran, gazz, from_date, to_date, dayz, lesstime, latearrival, missed, total ) ";
                 InsertUpdateQry += " values ( '"+ attenUsrEmpRdr["asm_id"].ToString() + "' , '" + attenUsrEmpRdr["name"].ToString() + "' ,'" + attenUsrEmpRdr["yr"].ToString() + "' " +
                     ", '" + attenUsrEmpRdr["mon"].ToString() + "' " +
                     ", '" + attenUsrEmpRdr["cunt"].ToString() + "' " +
@@ -205,7 +209,8 @@ namespace AttendancesServices
                     ", 'kpi' "+
                     ", '" + attenUsrEmpRdr["lesstime"].ToString() + "' " +
                     ", '" + attenUsrEmpRdr["latearrival"].ToString() + "' " +
-                    ", '" + attenUsrEmpRdr["missed"].ToString() + "' )";
+                    ", '" + attenUsrEmpRdr["missed"].ToString() + "' " +
+                    ", '" + day + "' )";
             }
             else
             {
@@ -231,6 +236,7 @@ namespace AttendancesServices
                     ", gazz = '" + attenUsrEmpRdr["gazz"].ToString() + "' " +
                     ", from_date = '" + M1.ToString("yyyy-MM-dd") + "' " +
                     ", to_date = '" + M2.ToString("yyyy-MM-dd") + "' " +
+                    ", total = '" + day + "' " +
                     ", lesstime = '" + attenUsrEmpRdr["lesstime"].ToString() + "' " +
                     ", latearrival = '" + attenUsrEmpRdr["latearrival"].ToString() + "' " +
                     ", missed = '" + attenUsrEmpRdr["missed"].ToString() + "' ";
@@ -244,7 +250,7 @@ namespace AttendancesServices
             
             Console.Write(" {0}\n", InsertUpdateQry);
 
-            using (MySqlCommand command = new MySqlCommand(InsertUpdateQry, conn))
+            using (MySqlCommand command = new (InsertUpdateQry, conn))
             {
                 count = command.ExecuteNonQuery();
             }

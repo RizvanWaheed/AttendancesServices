@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <ApplicationIcon>logo.ico</ApplicationIcon>
     <Win32Resource />
     <StartupObject></StartupObject>
@@ -12,6 +12,10 @@
     <Product>HRM</Product>
     <NeutralLanguage>en-US</NeutralLanguage>
     <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <ItemGroup>

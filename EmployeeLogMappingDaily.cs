@@ -2,13 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    class EmployeeLogMapping : Common, IDisposable
+    sealed class EmployeeLogMappingDaily : Common, IDisposable
     {
         // private DateTime Start, End, Start1, End1;
 
@@ -16,7 +14,7 @@ namespace AttendancesServices
         private readonly DateTime localMonthDate;
         private readonly MySqlConnection conn;
 
-        public EmployeeLogMapping(DateTime From, DateTime To)
+        public EmployeeLogMappingDaily(DateTime From, DateTime To)
         {
             localDate = To;
             localMonthDate = From;
@@ -53,7 +51,7 @@ namespace AttendancesServices
                 Console.Write(" {0}\n", MachineAttendanceRow["employee_id"]);
                 Console.Write(" {0}\n", MachineAttendanceRow["date"]);
                 Console.Write(" {0}\n", counting);
-                
+
                 if (MachineAttendanceRow.IsNull("employee_id"))
                 {
                     Console.Write("Employee not found {0} \n", MachineAttendanceRow["asm_id"]);
@@ -78,21 +76,21 @@ namespace AttendancesServices
                     {
                         reporingTo = "1";
                     }
-                    
+
                     updateColumns += " , reporting_to = '" + reporingTo + "' ";
                     string reporting_to_too = EmployeeLogsRow["reporting_to_too"].ToString();
                     if (string.IsNullOrEmpty(reporting_to_too))
                     {
-                        updateColumns += " , reporting_to_too = '"+ reporingTo + "' ";
+                        updateColumns += " , reporting_to_too = '" + reporingTo + "' ";
                     }
                     else
                     {
                         updateColumns += " , reporting_to_too = '" + reporting_to_too + "' ";
                     }
 
-                   /* updateColumns += ", reporting_to = '" + EmployeeLogsRow["reporting_to"] + "' ";
-                    
-                    updateColumns += ", reporting_to_too = '" + EmployeeLogsRow["reporting_to_too"] + "' ";*/
+                    /* updateColumns += ", reporting_to = '" + EmployeeLogsRow["reporting_to"] + "' ";
+
+                     updateColumns += ", reporting_to_too = '" + EmployeeLogsRow["reporting_to_too"] + "' ";*/
 
 
                     if (string.IsNullOrEmpty(campaign_id))
@@ -112,7 +110,7 @@ namespace AttendancesServices
                     {
                         updateColumns += " , sub_campaign_id = '" + sub_campaign_id + "' ";
                     }
-                                                         
+
                     InsertUpdateQry = " UPDATE tbl_attendances_machine set " + updateColumns;
                     InsertUpdateQry += " where asm_id = " + MachineAttendanceRow["asm_id"] + " and date = '" + Convert.ToDateTime(MachineAttendanceRow["date"]).ToString("yyyy-MM-dd") + "'"; // + " and sap_code = " + item.Key + "";
 
@@ -130,17 +128,17 @@ namespace AttendancesServices
 
                 }
 
-                              
+
                 counting++;
             }
             // return;
         }
         private DataSet GetMachineAttendance()
         {
-            string AttendanceMachineQry = "select * from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "'  and date <= '" + localDate.ToString("yyyy-MM-dd") + "' order by date ASC, asm_id ASC "; 
+            string AttendanceMachineQry = "select * from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "'  and date <= '" + localDate.ToString("yyyy-MM-dd") + "' order by date ASC, asm_id ASC ";
             Console.Write(" {0}\n", AttendanceMachineQry);
             DataSet AttendanceMachineDS = new ();
-            
+
             // DataTable attenUsrEmpDT = new DataTable();
             // MySqlDataReader attenUsrEmpRdr;
             try
@@ -186,7 +184,7 @@ namespace AttendancesServices
                 "and date <= '" + Convert.ToDateTime(day).ToString("yyyy-MM-dd") + "' " +
                 "order by date desc limit 1";
             DataTable EmployeeLogsDT = new ();
-            
+
             Console.Write(" {0}\n", SelectEmployeeLogs);
             try
             {
@@ -204,7 +202,7 @@ namespace AttendancesServices
             {
                 Console.WriteLine(ex.GetBaseException().Message);
             }
-            
+
 
             return EmployeeLogsDT;
         }
@@ -217,7 +215,7 @@ namespace AttendancesServices
             conn.Dispose();
             GC.SuppressFinalize(this);
         }
-        ~EmployeeLogMapping()
+        ~EmployeeLogMappingDaily()
         {
             conn.Close();
             conn.Dispose();

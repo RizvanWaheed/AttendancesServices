@@ -17,7 +17,7 @@ namespace AttendancesServices
             // Keep the console window open in debug mode.
             Console.WriteLine("Press any key to exit.");
             OnTimedEventFirst();
-            System.Timers.Timer timer = new System.Timers.Timer();
+            System.Timers.Timer timer = new ();
             timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             timer.Interval = 2400000; //number in milisecinds  
             timer.Enabled = true;
@@ -54,14 +54,14 @@ namespace AttendancesServices
         }
         private static void OnTimedEventFirst()
         {
-            AttendanceTask svc = new AttendanceTask();
+            AttendanceTask svc = new ();
             svc.AttendanceTaskServicesInitials();
         }
         private static void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             Console.WriteLine("I am in time lapsed.");
             //new Service();
-            AttendanceTask svc = new AttendanceTask();
+            AttendanceTask svc = new ();
             svc.AttendanceTaskServices();
         }
     }

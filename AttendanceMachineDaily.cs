@@ -4,22 +4,18 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    sealed class MachineAttendance : CommonQueries, IDisposable //,  // : IDisposable
+    sealed class AttendanceMachineDaily : CommonQueries, IDisposable //,  // : IDisposable
     {
+        private readonly DateTime localDate;
+        private readonly DateTime localMonthDate;
 
-        // private readonly DateTime localDate = new DateTime(2021, 1, 14, 0, 0, 0);  //DateTime.Now;
-        // private readonly DateTime localMonthDate = new DateTime(2021, 1, 10, 0, 0, 0); //DateTime.Now.AddMonths(-2);
-        private DateTime localDate;
-        private DateTime localMonthDate;
-
-        private MySqlConnection conn;
+        private readonly MySqlConnection conn;
         private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
 
-        public MachineAttendance(DateTime From, DateTime To)
+        public AttendanceMachineDaily(DateTime From, DateTime To)
         {
             localDate = To;
             localMonthDate = From;
@@ -55,18 +51,11 @@ namespace AttendancesServices
 
             DataSet attendanceDS = GetAttendanceEmployeeUsers();
             var actual_shifttime_ends_next = new Dictionary<string, DateTime>();
-            // Dictionary<string, DateTime> actual_shifttime_ends_prev;// = new Dictionary<string, DateTime>();  //string.Empty;
-            // Dictionary<string, string> shiftTimeDict;
-            // var DataAttendanceRow = new Dictionary<string, Dictionary<string, Attendance>>();
 
-           
-            DateTime checkOlder = new DateTime(2015, 12, 31);
-            Dictionary<string, string> employeeUserDict = new Dictionary<string, string>();
+            DateTime checkOlder = new (2015, 12, 31);
+            Dictionary<string, string> employeeUserDict = new ();
             foreach (DataRow campaignRow in attendanceDS.Tables["Attendance"].Rows)//campaignDS.Tables["Customers"].Rows
             {
-                // CultureInfo culture = new CultureInfo("en-US");
-                // DateTime tempDate = Convert.ToDateTime("1/1/2010 12:10:15 PM", culture);
-
 
                 DateTime CardTime = Convert.ToDateTime(campaignRow["CardTime"]);
                 string NewDate = Convert.ToDateTime(campaignRow["CardTime"]).ToString("yyyy-MM-dd");
@@ -79,10 +68,6 @@ namespace AttendancesServices
                 {
                     if (!DictData[sap_code].ContainsKey(NewDate))
                     {
-                        //    DictData[sap_code][NewDate]["sap_code"] = sap_code;
-                        // }
-                        // else
-                        // {
                         DictData[sap_code].Add(NewDate, new Dictionary<string, string>()); //{ { "sap_code", sap_code } }
                     }
                 }
@@ -94,10 +79,6 @@ namespace AttendancesServices
                 {
                     if (!DictData[sap_code].ContainsKey(NextDate))
                     {
-                        //    DictData[sap_code][NewDate]["sap_code"] = sap_code;
-                        //}
-                        //else
-                        //{
                         DictData[sap_code].Add(NextDate, new Dictionary<string, string>()); //{ { "sap_code", sap_code } }
                     }
                 }
@@ -105,7 +86,6 @@ namespace AttendancesServices
                 {
                     DictData.Add(sap_code, new Dictionary<string, Dictionary<string, string>>() { { NextDate, new Dictionary<string, string>() } }); // { { "sap_code", sap_code } }
                 }
-
                 if (!DictData[sap_code][NewDate].ContainsKey("asm_id"))
                 {
                     employeeUserDict = GetUserEmployee(sap_code, conn); //NewDate,
@@ -114,24 +94,13 @@ namespace AttendancesServices
                         continue;
                     }
                 }
-                //else { 
-                // Dictionary<string, string> employeeUserDict = GetUserEmployee(NewDate, sap_code);
-                /*if (employeeUserDict.Count() < 1)
-                {
-                    continue;
-                }
-                else
-                {
-                */
                 DictData[sap_code][NextDate]["name"] = DictData[sap_code][NewDate]["name"] = employeeUserDict["name"];
                 DictData[sap_code][NextDate]["employee_id"] = DictData[sap_code][NewDate]["employee_id"] = employeeUserDict["employee_id"];
                 DictData[sap_code][NextDate]["asm_id"] = DictData[sap_code][NewDate]["asm_id"] = employeeUserDict["asm_id"];
                 DictData[sap_code][NextDate]["weeklyOff"] = DictData[sap_code][NewDate]["weeklyOff"] = employeeUserDict["weeklyOff"];
                 DictData[sap_code][NextDate]["working_hour"] = DictData[sap_code][NewDate]["working_hour"] = employeeUserDict["working_hour"];
                 DictData[sap_code][NextDate]["working_hour_number"] = DictData[sap_code][NewDate]["working_hour_number"] = employeeUserDict["working_hour_number"];
-                //}
-                //string asm_id = employeeUserDict["asm_id"];
-                
+
                 Dictionary<string, string> shiftDict = GetAttendanceShift(NewDate, DictData[sap_code][NewDate]["asm_id"]);
 
                 DictData[sap_code][NextDate]["Shifttime"] = DictData[sap_code][NewDate]["Shifttime"] = shiftDict["Shifttime"].ToString();
@@ -155,19 +124,13 @@ namespace AttendancesServices
                     DictData[sap_code][NewDate]["Outtime"] = string.Empty;
                     DictData[sap_code][NewDate]["OutDatetime"] = string.Empty;
                 }
-                // Console.Write(DictData);
-                // DictData[sap_code][NewDate].Add("sap_code", sap_code);
-                // DictData[sap_code][NewDate]["date"] = NewDate;         
 
                 String actual_shifttime = DictData[sap_code][NewDate]["ShiftDatetime"] = Convert.ToDateTime(NewDate + " " + shiftDict["Shifttime"]).ToString("yyyy-MM-dd HH:mm:ss");
                 String actual_shifttime_start = DictData[sap_code][NewDate]["ShiftStart"] = Convert.ToDateTime(NewDate + " " + shiftDict["Shifttime"]).AddHours(-4).ToString("yyyy-MM-dd HH:mm:ss");
                 String actual_shifttime_ends = DictData[sap_code][NewDate]["ShiftEnd"] = Convert.ToDateTime(NewDate + " " + shiftDict["Shifttime"]).AddHours(20).ToString("yyyy-MM-dd HH:mm:ss");
                 String actual_shifttime_start_max = Convert.ToDateTime(NewDate + " " + shiftDict["Shifttime"]).AddHours(6).ToString("yyyy-MM-dd HH:mm:ss");
                 DateTime actual_shifttime_margin = Convert.ToDateTime(NewDate + " " + shiftDict["Shifttime"]).AddMinutes(15);
-                
-                // Console.Write(" {0}\n", shiftDict["Shifttime"]);
-                // String.IsNullOrEmpty(s);
-                // DateTime.Compare();
+
                 /*
                  * < 0 − If date1 is earlier than date2. date1 before date2
                 0 − If date1 is the same as date2. date1 equals date2
@@ -230,7 +193,7 @@ namespace AttendancesServices
                     {
                         TimeSpan PastShift = TimeSpan.Parse(DictData[sap_code][PastDate]["Shifttime"]);
                         TimeSpan CurrShift = TimeSpan.Parse(DictData[sap_code][NewDate]["Shifttime"]);
-                        ReslShift =  CurrShift.Subtract(PastShift);
+                        ReslShift = CurrShift.Subtract(PastShift);
 
                         Console.Write(" Shift Difference {0}\n", ReslShift);
                         Console.Write(" Difference Result {0}\n", ReslShift >= ReslShift2);
@@ -238,12 +201,12 @@ namespace AttendancesServices
 
                     }
                 }
-                
+
 
 
                 if (intialCase != 0 && resultOut != 0 && resultOut2 > 0 && resultOut3 > 0) //((resultOut3 > 0 && ReslShift >= ReslShift2) || (resultOut3 < 0 && ReslShift < ReslShift2)))
                 {
-                    Console.Write(" {0}\n","First IF");
+                    Console.Write(" {0}\n", "First IF");
                     if (!DictData[sap_code].ContainsKey(PastDate))
                     {
                         DictData[sap_code].Add(PastDate, new Dictionary<string, string>()); //{ { "sap_code", sap_code } }
@@ -315,7 +278,7 @@ namespace AttendancesServices
                     DictData[item.Key][itemL2.Key]["missed"] = "0";
                     DictData[item.Key][itemL2.Key]["difference"] = "0";
                     DictData[item.Key][itemL2.Key]["color"] = "#000";
-                    
+
                     if (String.IsNullOrEmpty(dictInner["Intimefound"]) && (!String.IsNullOrEmpty(dictInner["Outtimefound"])))
                     {
                         // $all_dates[$value['date']]['startEditable'] = false;
@@ -384,7 +347,7 @@ namespace AttendancesServices
                         Console.Write(" {0}\n", int.Parse(multiArray[1]));
                         Console.Write(" {0}\n", hours);
                         Console.Write(" {0}\n", minutes);
-                        
+
 
                         /*
                         < 0 − If fromtiming is earlier than Margin. fromtiming before Margin
@@ -431,7 +394,7 @@ namespace AttendancesServices
 
             SetAttendanceData(DictData);
             conn.Close();
-        
+
 
             /*attenUsrEmpDT.Load(attenUsrEmpQryCmd.ExecuteReader());*/
             /*  Console.Write(" {0}\n", attenUsrEmpDS);*/
@@ -447,9 +410,9 @@ namespace AttendancesServices
 
             Console.Write(" {0}\n", attenUsrEmpQry);
             // DatabaseConnection.getDBConnection();
-            
+
             // MySqlCommand attenUsrEmp = new MySqlCommand(attenUsrEmpQry, conn); 
-            DataSet attenUsrEmpDS = new DataSet();
+            DataSet attenUsrEmpDS = new ();
             // DataTable attenUsrEmpDT = new DataTable();
             // MySqlDataReader attenUsrEmpRdr;
 
@@ -467,9 +430,9 @@ namespace AttendancesServices
                 // attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
 
                 // Way 3
-                using (MySqlCommand attenUsrEmp = new MySqlCommand(attenUsrEmpQry, conn))
+                using (MySqlCommand attenUsrEmp = new (attenUsrEmpQry, conn))
                 {
-                    using (MySqlDataAdapter attenUsrEmpDA = new MySqlDataAdapter(attenUsrEmp))
+                    using (MySqlDataAdapter attenUsrEmpDA = new (attenUsrEmp))
                     {
                         attenUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                         attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
@@ -486,11 +449,11 @@ namespace AttendancesServices
             {
                 conn.Dispose(); // return connection to the pool
             }*/
-           // CloseConnection();
+            // CloseConnection();
             return attenUsrEmpDS;
             // return attenUsrEmpDT;
         }
-        
+
         private Dictionary<string, string> GetAttendanceShift(string dateValue, string asmId)
         {
             // string cardTime = Convert.ToDateTime(dateValue).ToString("yyyy-MM-dd"); 
@@ -503,8 +466,8 @@ namespace AttendancesServices
 
             //OpenConection();
             string attenShiftSlr = string.Empty;
-            Dictionary<string, string> shiftTimeDict = new Dictionary<string, string>();
-            using (MySqlCommand attenShiftCmd = new MySqlCommand(attenShiftQry, conn))
+            Dictionary<string, string> shiftTimeDict = new ();
+            using (MySqlCommand attenShiftCmd = new (attenShiftQry, conn))
             {
                 var tsAttendShift = attenShiftCmd.ExecuteScalar();
                 if (tsAttendShift != null)
@@ -540,15 +503,15 @@ namespace AttendancesServices
             Console.Write(" {0}\n", attenShiftQry);
 
             //OpenConection();
-            String attenShiftSlr; 
+            String attenShiftSlr;
 
-            using (MySqlCommand attenShiftCmd = new MySqlCommand(attenShiftQry, conn))
+            using (MySqlCommand attenShiftCmd = new (attenShiftQry, conn))
             {
                 var attenShiftSlr1 = attenShiftCmd.ExecuteScalar();
-                attenShiftSlr = (attenShiftSlr1==null)?string.Empty:attenShiftSlr1.ToString();
+                attenShiftSlr = (attenShiftSlr1 == null) ? string.Empty : attenShiftSlr1.ToString();
             }
-                // Execute the query and obtain the value of the first column of the first row
-                
+            // Execute the query and obtain the value of the first column of the first row
+
             // CloseConnection();
             return attenShiftSlr;
 
@@ -596,7 +559,7 @@ namespace AttendancesServices
                         // Console.Write(dictInner["asm_id"]);
                         long count = 0;
                         count = AttendanceAsmidAndDateWiseExist(conn, dictInner["asm_id"].ToString(), itemL2.Key, count);
-                        
+
                         dictInner["proc"] = "Service";
                         dictInner["applied"] = "0";
                         dictInner["span"] = "0";
@@ -623,7 +586,7 @@ namespace AttendancesServices
             }
             finally
             {
-               
+
             }
             // Define a query returning a single row result set
             /*string updateQry = "INSERT INTO campaign_dials (asm_id, date, sap_code, title, InDatetime, Intime, OutDatetime, Outtime, shifttime, lesstime, latearrival, missed, color, Intimefound, Outtimefound, Shifttimefound, ShiftDatetime, ShiftStart, ShiftEnd, difference )";
@@ -649,13 +612,12 @@ namespace AttendancesServices
             GC.SuppressFinalize(this);
 
         }
-        ~MachineAttendance()
+        ~AttendanceMachineDaily()
         {
             DictData = null;
             conn.Close();
             conn.Dispose();
             Console.WriteLine(".............................Out Machine Attendance..........................");
         }
-
     }
 }

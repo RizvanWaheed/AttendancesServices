@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    sealed class KpiAttendance: CommonQueries, IDisposable
+    sealed class AttendanceKpi: CommonQueries, IDisposable
     {
-        private DateTime localDate;
-        private DateTime localMonthDate;
-        private MySqlConnection conn;
+        private readonly DateTime localDate;
+        private readonly DateTime localMonthDate;
+        private readonly MySqlConnection conn;
         // private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
-        public KpiAttendance(DateTime From, DateTime To)
+        public AttendanceKpi(DateTime From, DateTime To)
         {
             localDate = To;
             localMonthDate = From;
@@ -40,13 +40,13 @@ namespace AttendancesServices
             try
             {
                 // OpenConection();
-                Dictionary<string, string> IUvalues = new Dictionary<string, string>();
+                Dictionary<string, string> IUvalues = new ();
                 foreach (DataRow KpiAttendanceDR in KpiAttendanceDS.Tables["KpiAttendance"].Rows)
                 {
                     long count = 0;
                     count = AttendanceAsmidAndDateWiseExist(conn, KpiAttendanceDR["asm_id"].ToString(), KpiAttendanceDR["date"].ToString(), count);
                    
-                    TimeSpan actualHours = new TimeSpan(0, 8, 0, 0);
+                    TimeSpan actualHours = new (0, 8, 0, 0);
                     int result = TimeSpan.Compare(actualHours, (TimeSpan)KpiAttendanceDR["title"]);
 
                     if (result > 0)
@@ -132,7 +132,7 @@ namespace AttendancesServices
 
             // OpenConection();
             // MySqlCommand attenUsrEmp = new MySqlCommand(attenUsrEmpQry, conn); 
-            DataSet KpiSelectDS = new DataSet();
+            DataSet KpiSelectDS = new ();
             // DataTable KpiSelectDT = new DataTable();
             // MySqlDataReader attenUsrEmpRdr;
 
@@ -150,9 +150,9 @@ namespace AttendancesServices
                 // KpiSelectDA.Fill(KpiSelectDS, "KpiAttendance");
 
                 // Way 3
-                using(MySqlCommand KpiSelectCmd = new MySqlCommand(KpiSelectQry, conn))
+                using(MySqlCommand KpiSelectCmd = new (KpiSelectQry, conn))
                 {
-                    using (MySqlDataAdapter KpiSelectDA = new MySqlDataAdapter(KpiSelectCmd))
+                    using (MySqlDataAdapter KpiSelectDA = new (KpiSelectCmd))
                     {
                         KpiSelectDA.SelectCommand.CommandType = CommandType.Text;
                         // attenUsrEmpDA.Fill(KpiSelectDT);
@@ -185,7 +185,7 @@ namespace AttendancesServices
             GC.SuppressFinalize(this);
 
         }
-        ~KpiAttendance()
+        ~AttendanceKpi()
         {
             conn.Close();
             conn.Dispose();
