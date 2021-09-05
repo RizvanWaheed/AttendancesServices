@@ -364,6 +364,7 @@ namespace AttendancesServices
                             employeeUserDict["sap_code"] = attenUsrEmpRdr["sap_code"].ToString();
                             employeeUserDict["slug"] = attenUsrEmpRdr["slug"].ToString();
                             employeeUserDict["name"] = attenUsrEmpRdr["full_name"].ToString();
+                            employeeUserDict["last_working_date"] = attenUsrEmpRdr["last_working_date"].ToString();
 
                             String slug = attenUsrEmpRdr["slug"].ToString();
                             if (slug.Contains("DUAL"))
