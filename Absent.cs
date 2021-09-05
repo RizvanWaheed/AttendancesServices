@@ -53,6 +53,26 @@ namespace AttendancesServices
             command.Dispose();
             return;
         }
+        public void RemoveAbsentiesDaily()
+        {
+            string DeleteQry = " Delete from tbl_attendances_machine ";
+            DeleteQry += " where type not in ('U','R','A','M','O') " +
+                        " and date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' " +
+                        " and date <= '" + localDate.ToString("yyyy-MM-dd") + "' ";
+
+            // OpenConection();
+            Console.Write(" {0}\n", DeleteQry);
+            MySqlCommand command = new(DeleteQry, conn);
+            if (command.ExecuteNonQuery() != 1)
+            {
+
+                //'handled as needed, //' but this snippet will throw an exception to force a rollback
+                //throw new InvalidProgramException();
+
+            }
+            command.Dispose();
+            return;
+        }
         public void GetAbsenties() { 
 
             string SelectChecked; // = string.Empty;

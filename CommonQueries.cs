@@ -318,7 +318,7 @@ namespace AttendancesServices
             // DateTime cardTime = Convert.ToDateTime(dateValue);
 
             string employyeeUserQry = "SELECT `tbl_users`.`role_id`, `tbl_users`.`login`, `tbl_employees`.`id`, `tbl_employees`.`sap_code`, `tbl_employees`.`full_name`" +
-                " , GROUP_CONCAT(`tbl_setup_setups`.`sub_setup_id`) as slugid, GROUP_CONCAT(`tbl_setups`.`slug` SEPARATOR '') as slug ";
+                " , `tbl_employees`.`last_working_date`, GROUP_CONCAT(`tbl_setup_setups`.`sub_setup_id`) as slugid, GROUP_CONCAT(`tbl_setups`.`slug` SEPARATOR '') as slug ";
             employyeeUserQry += " from tbl_employees ";
             employyeeUserQry += " INNER JOIN `tbl_users` ON `tbl_users`.`employee_id` = `tbl_employees`.`id`";
             employyeeUserQry += " LEFT JOIN `tbl_setup_setups` ON (`tbl_setup_setups`.`setup_id` = `tbl_users`.`role_id` and `tbl_setup_setups`.`type` =  'permissions_roles') ";

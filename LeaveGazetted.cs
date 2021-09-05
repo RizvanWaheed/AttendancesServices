@@ -39,8 +39,12 @@ namespace AttendancesServices
             string SelectCheckedIn = " select date, type, form " +
                                      " from tbl_leave_gazetted " +
                                      " where status = 1 " +                                     
-                                     " and date <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
-                                     " and date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' ";
+                                     " and ( " +
+                                     " ( date <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
+                                     "      AND date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' ) " +
+                                     " or ( date(created) <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
+                                     "      AND date(created) >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' ) " +
+                                     " ) ";
 
 
             // string SelectCheck = "select count(*) cnt, asm_id from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' and date <= '" + localDate.ToString("yyyy-MM-dd") + "' group by asm_id";
