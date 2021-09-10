@@ -13,8 +13,8 @@ namespace AttendancesServices
         private readonly DateTime localDate;
         private readonly DateTime localMonthDate;
         private readonly MySqlConnection conn;
-        // private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
         private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
+        
         public AttendancesShifts(DateTime From, DateTime To)
         {
             localDate = To;

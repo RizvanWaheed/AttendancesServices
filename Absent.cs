@@ -37,7 +37,7 @@ namespace AttendancesServices
         public void RemoveAbsenties()
         {
             string DeleteQry = " Delete from tbl_attendances_machine ";
-            DeleteQry += " where type not in ('U','L','R','A','M','O','T','G','C','HL','SL','CL','AL','ML','PL','CVO','ADO','WO','VO','OCO','OSO','TO') " +
+            DeleteQry += " where type in ('U','L','R','A','M','O','T','G','C','HL','SL','CL','AL','ML','PL','CVO','ADO','WO','VO','OCO','OSO','TO') " +
                         " and date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' " +
                         " and date <= '" + localDate.ToString("yyyy-MM-dd") + "' ";
 
@@ -56,7 +56,7 @@ namespace AttendancesServices
         public void RemoveAbsentiesDaily()
         {
             string DeleteQry = " Delete from tbl_attendances_machine ";
-            DeleteQry += " where type not in ('U','R','A','M','O') " +
+            DeleteQry += " where type in ('U','R','A','M','O') " +
                         " and date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' " +
                         " and date <= '" + localDate.ToString("yyyy-MM-dd") + "' ";
 
