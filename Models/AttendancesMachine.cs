@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AttendancesServices.Models
+﻿namespace AttendancesServices.Models
 {
     public partial class AttendancesMachine
     {

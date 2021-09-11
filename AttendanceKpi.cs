@@ -2,13 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    sealed class AttendanceKpi: CommonQueries, IDisposable
+    sealed class AttendanceKpi : CommonQueries, IDisposable
     {
         private readonly DateTime localDate;
         private readonly DateTime localMonthDate;
@@ -40,13 +37,13 @@ namespace AttendancesServices
             try
             {
                 // OpenConection();
-                Dictionary<string, string> IUvalues = new ();
+                Dictionary<string, string> IUvalues = new();
                 foreach (DataRow KpiAttendanceDR in KpiAttendanceDS.Tables["KpiAttendance"].Rows)
                 {
                     long count = 0;
                     count = AttendanceAsmidAndDateWiseExist(conn, KpiAttendanceDR["asm_id"].ToString(), KpiAttendanceDR["date"].ToString(), count);
-                   
-                    TimeSpan actualHours = new (0, 8, 0, 0);
+
+                    TimeSpan actualHours = new(0, 8, 0, 0);
                     int result = TimeSpan.Compare(actualHours, (TimeSpan)KpiAttendanceDR["title"]);
 
                     if (result > 0)
@@ -59,14 +56,14 @@ namespace AttendancesServices
                         IUvalues["color"] = "#02bbf0";
                         IUvalues["lesstime"] = "0";
                     }
-                    
-                    IUvalues["name"] =  KpiAttendanceDR["name"].ToString();
+
+                    IUvalues["name"] = KpiAttendanceDR["name"].ToString();
                     IUvalues["employee_id"] = KpiAttendanceDR["employee_id"].ToString();
                     IUvalues["title"] = KpiAttendanceDR["title"].ToString();
                     IUvalues["applied"] = "0";
                     IUvalues["proc"] = "None";
                     IUvalues["span"] = "0";
-                    IUvalues["type"] = "P";                    
+                    IUvalues["type"] = "P";
                     IUvalues["missed"] = "0";
                     IUvalues["latearrival"] = "0";
                     IUvalues["Intimefound"] = "0";
@@ -95,7 +92,7 @@ namespace AttendancesServices
                         AttendaceUpdate(conn, IUvalues, count);
                     }
 
-                   
+
                     /* Console.Write(" {0}\n", KpiAttendanceDR["date"]);
                      Console.Write(" {0}\n", KpiAttendanceDR["sip"]);
                      Console.Write(" {0}\n", KpiAttendanceDR["asm_id"]);
@@ -132,7 +129,7 @@ namespace AttendancesServices
 
             // OpenConection();
             // MySqlCommand attenUsrEmp = new MySqlCommand(attenUsrEmpQry, conn); 
-            DataSet KpiSelectDS = new ();
+            DataSet KpiSelectDS = new();
             // DataTable KpiSelectDT = new DataTable();
             // MySqlDataReader attenUsrEmpRdr;
 
@@ -150,9 +147,9 @@ namespace AttendancesServices
                 // KpiSelectDA.Fill(KpiSelectDS, "KpiAttendance");
 
                 // Way 3
-                using(MySqlCommand KpiSelectCmd = new (KpiSelectQry, conn))
+                using (MySqlCommand KpiSelectCmd = new(KpiSelectQry, conn))
                 {
-                    using (MySqlDataAdapter KpiSelectDA = new (KpiSelectCmd))
+                    using (MySqlDataAdapter KpiSelectDA = new(KpiSelectCmd))
                     {
                         KpiSelectDA.SelectCommand.CommandType = CommandType.Text;
                         // attenUsrEmpDA.Fill(KpiSelectDT);

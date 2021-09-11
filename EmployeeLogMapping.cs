@@ -1,10 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
@@ -53,7 +49,7 @@ namespace AttendancesServices
                 Console.Write(" {0}\n", MachineAttendanceRow["employee_id"]);
                 Console.Write(" {0}\n", MachineAttendanceRow["date"]);
                 Console.Write(" {0}\n", counting);
-                
+
                 if (MachineAttendanceRow.IsNull("employee_id"))
                 {
                     Console.Write("Employee not found {0} \n", MachineAttendanceRow["asm_id"]);
@@ -78,21 +74,21 @@ namespace AttendancesServices
                     {
                         reporingTo = "1";
                     }
-                    
+
                     updateColumns += " , reporting_to = '" + reporingTo + "' ";
                     string reporting_to_too = EmployeeLogsRow["reporting_to_too"].ToString();
                     if (string.IsNullOrEmpty(reporting_to_too))
                     {
-                        updateColumns += " , reporting_to_too = '"+ reporingTo + "' ";
+                        updateColumns += " , reporting_to_too = '" + reporingTo + "' ";
                     }
                     else
                     {
                         updateColumns += " , reporting_to_too = '" + reporting_to_too + "' ";
                     }
 
-                   /* updateColumns += ", reporting_to = '" + EmployeeLogsRow["reporting_to"] + "' ";
-                    
-                    updateColumns += ", reporting_to_too = '" + EmployeeLogsRow["reporting_to_too"] + "' ";*/
+                    /* updateColumns += ", reporting_to = '" + EmployeeLogsRow["reporting_to"] + "' ";
+
+                     updateColumns += ", reporting_to_too = '" + EmployeeLogsRow["reporting_to_too"] + "' ";*/
 
 
                     if (string.IsNullOrEmpty(campaign_id))
@@ -112,14 +108,14 @@ namespace AttendancesServices
                     {
                         updateColumns += " , sub_campaign_id = '" + sub_campaign_id + "' ";
                     }
-                                                         
+
                     InsertUpdateQry = " UPDATE tbl_attendances_machine set " + updateColumns;
                     InsertUpdateQry += " where asm_id = " + MachineAttendanceRow["asm_id"] + " and date = '" + Convert.ToDateTime(MachineAttendanceRow["date"]).ToString("yyyy-MM-dd") + "'"; // + " and sap_code = " + item.Key + "";
 
                     Console.Write(" {0}\n", InsertUpdateQry);
 
 
-                    using (MySqlCommand command = new (InsertUpdateQry, conn))
+                    using (MySqlCommand command = new(InsertUpdateQry, conn))
                     {
                         if (command.ExecuteNonQuery() != 1)
                         {
@@ -130,17 +126,17 @@ namespace AttendancesServices
 
                 }
 
-                              
+
                 counting++;
             }
             // return;
         }
         private DataSet GetMachineAttendance()
         {
-            string AttendanceMachineQry = "select * from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "'  and date <= '" + localDate.ToString("yyyy-MM-dd") + "' order by date ASC, asm_id ASC "; 
+            string AttendanceMachineQry = "select * from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "'  and date <= '" + localDate.ToString("yyyy-MM-dd") + "' order by date ASC, asm_id ASC ";
             Console.Write(" {0}\n", AttendanceMachineQry);
-            DataSet AttendanceMachineDS = new ();
-            
+            DataSet AttendanceMachineDS = new();
+
             // DataTable attenUsrEmpDT = new DataTable();
             // MySqlDataReader attenUsrEmpRdr;
             try
@@ -156,9 +152,9 @@ namespace AttendancesServices
                 // attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
 
                 // Way 3
-                using (MySqlCommand AttendanceMachineEmp = new (AttendanceMachineQry, conn))
+                using (MySqlCommand AttendanceMachineEmp = new(AttendanceMachineQry, conn))
                 {
-                    using (MySqlDataAdapter AttendanceMachineDA = new (AttendanceMachineEmp))
+                    using (MySqlDataAdapter AttendanceMachineDA = new(AttendanceMachineEmp))
                     {
                         AttendanceMachineDA.SelectCommand.CommandType = CommandType.Text;
                         AttendanceMachineDA.Fill(AttendanceMachineDS, "Attendance");
@@ -185,14 +181,14 @@ namespace AttendancesServices
                 "and employee_id = " + employee_id + " " +
                 "and date <= '" + Convert.ToDateTime(day).ToString("yyyy-MM-dd") + "' " +
                 "order by date desc limit 1";
-            DataTable EmployeeLogsDT = new ();
-            
+            DataTable EmployeeLogsDT = new();
+
             Console.Write(" {0}\n", SelectEmployeeLogs);
             try
             {
-                using (MySqlCommand EmployeeLogsCmd = new (SelectEmployeeLogs, conn))
+                using (MySqlCommand EmployeeLogsCmd = new(SelectEmployeeLogs, conn))
                 {
-                    using (MySqlDataAdapter EmployeeLogsDA = new (EmployeeLogsCmd))
+                    using (MySqlDataAdapter EmployeeLogsDA = new(EmployeeLogsCmd))
                     {
                         EmployeeLogsDA.SelectCommand.CommandType = CommandType.Text;
                         EmployeeLogsDA.Fill(EmployeeLogsDT);
@@ -204,7 +200,7 @@ namespace AttendancesServices
             {
                 Console.WriteLine(ex.GetBaseException().Message);
             }
-            
+
 
             return EmployeeLogsDT;
         }

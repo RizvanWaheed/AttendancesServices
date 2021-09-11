@@ -2,13 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    sealed class WeeklyOff: CommonQueries, IDisposable
+    sealed class WeeklyOff : CommonQueries, IDisposable
     {
         private readonly DateTime localDate;
         private readonly DateTime localMonthDate;
@@ -49,20 +46,21 @@ namespace AttendancesServices
             */
 
             DataTable SelectCheckDt = UsersList();
-            
+
             Dictionary<string, string> employeeUserDict;// = new Dictionary<string, string>();
-            
-            foreach (DataRow SelectCheckRdr in SelectCheckDt.Rows) {
+
+            foreach (DataRow SelectCheckRdr in SelectCheckDt.Rows)
+            {
                 // while (SelectCheckRdr.Read())  // 	WEEKDAY("2021-01-26") in (5,6) Saturday and Sunday;
                 // {
                 Console.Write(" {0}\n", SelectCheckRdr["asm_id"]);
-                employeeUserDict = GetUserEmployeeOffDays( SelectCheckRdr["asm_id"].ToString());//localDate.ToString("yyyy-MM-dd"),
+                employeeUserDict = GetUserEmployeeOffDays(SelectCheckRdr["asm_id"].ToString());//localDate.ToString("yyyy-MM-dd"),
                 if (!employeeUserDict.ContainsKey("asm_id"))
                 {
                     continue;
                 }
                 //long role = (long) employeeUserDict["role_id"].ToString();
-                
+
                 if (String.Compare(employeeUserDict["role_id"], "317") == 0)//(employeeUserDict["role_id"].Contains("317"))
                 {
                     continue;
@@ -72,7 +70,7 @@ namespace AttendancesServices
                 {
                     if ((todayDate.DayOfWeek == DayOfWeek.Sunday) || (todayDate.DayOfWeek == DayOfWeek.Saturday))
                     {
-                        Dictionary<string, string> WeeklyData = new ();
+                        Dictionary<string, string> WeeklyData = new();
 
                         WeeklyData["asm_id"] = SelectCheckRdr["asm_id"].ToString();
                         WeeklyData["color"] = "#07d4a1";
@@ -80,15 +78,15 @@ namespace AttendancesServices
                         WeeklyData["employee_id"] = employeeUserDict["employee_id"];
                         WeeklyData["name"] = employeeUserDict["full_name"];
                         long count = 0;
-                        
+
                         count = AttendanceAsmidAndDateWiseExist(conn, SelectCheckRdr["asm_id"].ToString(), todayDate.ToString("yyyy-MM-dd"), count);
-                        
+
                         // int weeker = GetWeekNumberOfMonth(todayDate);
                         int MonthCount = NumberOfParticularDaysInMonth(todayDate.Year, todayDate.Month, DayOfWeek.Saturday);
-                        double HalfMonthCount = (double)MonthCount /2;
+                        double HalfMonthCount = (double)MonthCount / 2;
                         int CutOff = (int)Math.Ceiling(HalfMonthCount);
 
-                        
+
 
                         if (count <= 0)
                         {
@@ -111,10 +109,10 @@ namespace AttendancesServices
                                 Console.Write(" CutOff  {0}\n", CutOff);
                                 Console.Write(" OffDaturdaysCount {0}\n", OffDaturdaysCount);
 
-                                if(OffDaturdaysCount <= CutOff)
+                                if (OffDaturdaysCount <= CutOff)
                                 {
                                     SetWeeklyOffData(WeeklyData, todayDate);
-                                }                                
+                                }
                             }
 
                         }
@@ -143,7 +141,7 @@ namespace AttendancesServices
 
                             }
                         }*/
-                        
+
                     }
                 }
             }
@@ -151,29 +149,29 @@ namespace AttendancesServices
             conn.Close();
             return;
         }
-       /* public void RemoveAbsenties(string asm_id, DateTime todayDate)
-        {
-            string DeleteQry = " Delete from tbl_attendances_machine ";
-            DeleteQry += " where type = 'A' and asm_id = " + asm_id + " and date = '" + todayDate.ToString("yyyy-MM-dd") + "'";
+        /* public void RemoveAbsenties(string asm_id, DateTime todayDate)
+         {
+             string DeleteQry = " Delete from tbl_attendances_machine ";
+             DeleteQry += " where type = 'A' and asm_id = " + asm_id + " and date = '" + todayDate.ToString("yyyy-MM-dd") + "'";
 
-            // OpenConection();
-            Console.Write(" {0}\n", DeleteQry);
-            MySqlCommand command = new MySqlCommand(DeleteQry, conn);
-            if (command.ExecuteNonQuery() != 1)
-            {
-                //'handled as needed, //' but this snippet will throw an exception to force a rollback
-                //throw new InvalidProgramException();
-            }
-            command.Dispose();
-            return;
-        }*/
+             // OpenConection();
+             Console.Write(" {0}\n", DeleteQry);
+             MySqlCommand command = new MySqlCommand(DeleteQry, conn);
+             if (command.ExecuteNonQuery() != 1)
+             {
+                 //'handled as needed, //' but this snippet will throw an exception to force a rollback
+                 //throw new InvalidProgramException();
+             }
+             command.Dispose();
+             return;
+         }*/
         private DataTable UsersList()
         {
             string SelectCheck = "select count(*) cnt, asm_id from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' and date <= '" + localDate.ToString("yyyy-MM-dd") + "' group by asm_id";
             Console.Write(" {0}\n", SelectCheck);
-            DataTable SelectCheckDt = new ();
-            
-            using (MySqlCommand SelectCheckCmd = new (SelectCheck, conn))
+            DataTable SelectCheckDt = new();
+
+            using (MySqlCommand SelectCheckCmd = new(SelectCheck, conn))
             {
                 SelectCheckCmd.CommandType = CommandType.Text;
                 MySqlDataReader SelectCheckRdr = SelectCheckCmd.ExecuteReader();
@@ -182,10 +180,10 @@ namespace AttendancesServices
             }
             return SelectCheckDt;
         }
-        private Dictionary<string, string> GetUserEmployeeOffDays( string code)//
+        private Dictionary<string, string> GetUserEmployeeOffDays(string code)//
         {
             // DateTime cardTime = Convert.ToDateTime(dateValue);
-            Dictionary<string, string> employeeUserDict = new ();
+            Dictionary<string, string> employeeUserDict = new();
 
             string employyeeUserQry = "SELECT  `tbl_employees`.`id`, `tbl_users`.`role_id`, `tbl_users`.`login`, `tbl_employees`.`sap_code`, `tbl_employees`.`full_name`, `tbl_setups`.`slug` ";
             employyeeUserQry += " from tbl_employees ";
@@ -198,7 +196,7 @@ namespace AttendancesServices
             // Console.Write(" {0}\n", employyeeUserQry);
 
 
-            using (MySqlCommand employeeUserCmd = new (employyeeUserQry, conn))
+            using (MySqlCommand employeeUserCmd = new(employyeeUserQry, conn))
             {
                 employeeUserCmd.CommandType = CommandType.Text;
                 using (MySqlDataReader attenUsrEmpRdr = employeeUserCmd.ExecuteReader())
@@ -325,7 +323,7 @@ namespace AttendancesServices
 
             // OpenConection();
             Console.Write(" {0}\n", InsertUpdateQry);
-            MySqlCommand command = new (InsertUpdateQry, conn);
+            MySqlCommand command = new(InsertUpdateQry, conn);
             if (command.ExecuteNonQuery() != 1)
             {
                 //'handled as needed, //' but this snippet will throw an exception to force a rollback

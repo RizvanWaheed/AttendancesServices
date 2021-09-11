@@ -1,8 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace AttendancesServices
 {
@@ -117,7 +115,7 @@ namespace AttendancesServices
                     Console.Write(" {0}\n", InsertUpdateQry);
 
 
-                    using (MySqlCommand command = new (InsertUpdateQry, conn))
+                    using (MySqlCommand command = new(InsertUpdateQry, conn))
                     {
                         if (command.ExecuteNonQuery() != 1)
                         {
@@ -137,7 +135,7 @@ namespace AttendancesServices
         {
             string AttendanceMachineQry = "select * from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "'  and date <= '" + localDate.ToString("yyyy-MM-dd") + "' order by date ASC, asm_id ASC ";
             Console.Write(" {0}\n", AttendanceMachineQry);
-            DataSet AttendanceMachineDS = new ();
+            DataSet AttendanceMachineDS = new();
 
             // DataTable attenUsrEmpDT = new DataTable();
             // MySqlDataReader attenUsrEmpRdr;
@@ -154,9 +152,9 @@ namespace AttendancesServices
                 // attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
 
                 // Way 3
-                using (MySqlCommand AttendanceMachineEmp = new (AttendanceMachineQry, conn))
+                using (MySqlCommand AttendanceMachineEmp = new(AttendanceMachineQry, conn))
                 {
-                    using (MySqlDataAdapter AttendanceMachineDA = new (AttendanceMachineEmp))
+                    using (MySqlDataAdapter AttendanceMachineDA = new(AttendanceMachineEmp))
                     {
                         AttendanceMachineDA.SelectCommand.CommandType = CommandType.Text;
                         AttendanceMachineDA.Fill(AttendanceMachineDS, "Attendance");
@@ -183,14 +181,14 @@ namespace AttendancesServices
                 "and employee_id = " + employee_id + " " +
                 "and date <= '" + Convert.ToDateTime(day).ToString("yyyy-MM-dd") + "' " +
                 "order by date desc limit 1";
-            DataTable EmployeeLogsDT = new ();
+            DataTable EmployeeLogsDT = new();
 
             Console.Write(" {0}\n", SelectEmployeeLogs);
             try
             {
-                using (MySqlCommand EmployeeLogsCmd = new (SelectEmployeeLogs, conn))
+                using (MySqlCommand EmployeeLogsCmd = new(SelectEmployeeLogs, conn))
                 {
-                    using (MySqlDataAdapter EmployeeLogsDA = new (EmployeeLogsCmd))
+                    using (MySqlDataAdapter EmployeeLogsDA = new(EmployeeLogsCmd))
                     {
                         EmployeeLogsDA.SelectCommand.CommandType = CommandType.Text;
                         EmployeeLogsDA.Fill(EmployeeLogsDT);

@@ -2,13 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    sealed class LeaveApplication :  CommonQueries, IDisposable
+    sealed class LeaveApplication : CommonQueries, IDisposable
     {
         private readonly DateTime localDate;
         private readonly DateTime localMonthDate;
@@ -20,7 +17,7 @@ namespace AttendancesServices
         {
             localDate = To;
             localMonthDate = From;
-            
+
             conn = DatabaseConnection.GetDBConnection();
             conn.Open();
 
@@ -91,7 +88,7 @@ namespace AttendancesServices
 
             // OpenConection();
             // MySqlCommand leaveUsrEmp = new MySqlCommand(leaveUsrEmpQry, conn); 
-            DataSet leaveUsrEmpDS = new ();
+            DataSet leaveUsrEmpDS = new();
             // DataTable leaveUsrEmpDT = new DataTable();
             // MySqlDataReader leaveUsrEmpRdr;
 
@@ -108,9 +105,10 @@ namespace AttendancesServices
                 // leaveUsrEmpDA.Fill(leaveUsrEmpDS, "Attendance");
 
                 // Way 3
-                using (MySqlCommand leaveUsrEmp = new (leaveUsrEmpQry, conn))
+                using (MySqlCommand leaveUsrEmp = new(leaveUsrEmpQry, conn))
                 {
-                    using (MySqlDataAdapter leaveUsrEmpDA = new (leaveUsrEmp)) {
+                    using (MySqlDataAdapter leaveUsrEmpDA = new(leaveUsrEmp))
+                    {
                         leaveUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                         // leaveUsrEmpDA.Fill(leaveUsrEmpDT);
                         leaveUsrEmpDA.Fill(leaveUsrEmpDS, "Leaves");
@@ -131,11 +129,11 @@ namespace AttendancesServices
         }
         private long SetLeavesData(DateTime date, DataRow leaveRow)
         {
-          /*  string InsertUpdateQry;
-            string insertColumns = string.Empty;
-            string insertValues = string.Empty;
-            string updateColumns = " proc = 'Service' ";
-            string type = leaveRow["type"].ToString();*/
+            /*  string InsertUpdateQry;
+              string insertColumns = string.Empty;
+              string insertValues = string.Empty;
+              string updateColumns = " proc = 'Service' ";
+              string type = leaveRow["type"].ToString();*/
 
             IUvalues = new Dictionary<string, string>();
             long count = 0;
@@ -173,7 +171,7 @@ namespace AttendancesServices
                 IUvalues["Intime"] = "00:00:00";
                 IUvalues["shifttime"] = "00:00:00";
                 IUvalues["ShiftDatetime"] = Convert.ToDateTime(date).ToString("yyyy-MM-dd");
-                
+
 
                 AttendaceInsert(conn, IUvalues, count);
             }
@@ -181,7 +179,7 @@ namespace AttendancesServices
             {
                 AttendaceUpdate(conn, IUvalues, count);
             }
-    
+
             // CloseConnection();
             return count;
         }

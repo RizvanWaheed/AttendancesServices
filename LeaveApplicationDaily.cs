@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace AttendancesServices
 {
@@ -82,7 +81,7 @@ namespace AttendancesServices
 
             Console.Write(" {0}\n", leaveUsrEmpQry);
 
-            DataSet leaveUsrEmpDS = new ();
+            DataSet leaveUsrEmpDS = new();
             try
             {
                 // Way 1
@@ -96,9 +95,9 @@ namespace AttendancesServices
                 // leaveUsrEmpDA.Fill(leaveUsrEmpDS, "Attendance");
 
                 // Way 3
-                using (MySqlCommand leaveUsrEmp = new (leaveUsrEmpQry, conn))
+                using (MySqlCommand leaveUsrEmp = new(leaveUsrEmpQry, conn))
                 {
-                    using (MySqlDataAdapter leaveUsrEmpDA = new (leaveUsrEmp))
+                    using (MySqlDataAdapter leaveUsrEmpDA = new(leaveUsrEmp))
                     {
                         leaveUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                         // leaveUsrEmpDA.Fill(leaveUsrEmpDT);
@@ -120,13 +119,13 @@ namespace AttendancesServices
         }
         private long SetLeavesData(DateTime date, DataRow leaveRow)
         {
-            
+
             IUvalues = new Dictionary<string, string>();
             long count = 0;
             count = AttendanceAsmidAndDateWiseExist(conn, leaveRow["asm_id"].ToString(), date.ToString(), count);
 
             Dictionary<string, string> leave = GetLeaveEntitle(leaveRow["type"].ToString());
-            
+
             IUvalues["color"] = leave["color"];
             IUvalues["name"] = leaveRow["name"].ToString();
             IUvalues["employee_id"] = leaveRow["employee_id"].ToString();

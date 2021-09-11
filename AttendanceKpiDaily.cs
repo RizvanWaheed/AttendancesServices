@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace AttendancesServices
 {
@@ -38,13 +37,13 @@ namespace AttendancesServices
             try
             {
                 // OpenConection();
-                Dictionary<string, string> IUvalues = new ();
+                Dictionary<string, string> IUvalues = new();
                 foreach (DataRow KpiAttendanceDR in KpiAttendanceDS.Tables["KpiAttendance"].Rows)
                 {
                     long count = 0;
                     count = AttendanceAsmidAndDateWiseExist(conn, KpiAttendanceDR["asm_id"].ToString(), KpiAttendanceDR["date"].ToString(), count);
 
-                    TimeSpan actualHours = new (0, 8, 0, 0);
+                    TimeSpan actualHours = new(0, 8, 0, 0);
                     int result = TimeSpan.Compare(actualHours, (TimeSpan)KpiAttendanceDR["title"]);
 
                     if (result > 0)
@@ -132,16 +131,16 @@ namespace AttendancesServices
 
             // OpenConection();
             // MySqlCommand attenUsrEmp = new MySqlCommand(attenUsrEmpQry, conn); 
-            DataSet KpiSelectDS = new ();
+            DataSet KpiSelectDS = new();
             // DataTable KpiSelectDT = new DataTable();
             // MySqlDataReader attenUsrEmpRdr;
 
 
             try
-            {                
-                using (MySqlCommand KpiSelectCmd = new (KpiSelectQry, conn))
+            {
+                using (MySqlCommand KpiSelectCmd = new(KpiSelectQry, conn))
                 {
-                    using (MySqlDataAdapter KpiSelectDA = new (KpiSelectCmd))
+                    using (MySqlDataAdapter KpiSelectDA = new(KpiSelectCmd))
                     {
                         KpiSelectDA.SelectCommand.CommandType = CommandType.Text;
                         // attenUsrEmpDA.Fill(KpiSelectDT);

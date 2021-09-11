@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
@@ -13,8 +11,8 @@ namespace AttendancesServices
         private readonly DateTime localDate;
         private readonly DateTime localMonthDate;
         private readonly MySqlConnection conn;
-        private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
-        
+        private readonly Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
+
         public AttendancesShifts(DateTime From, DateTime To)
         {
             localDate = To;
@@ -46,7 +44,7 @@ namespace AttendancesServices
                 string asm_id = shiftRow["asm_id"].ToString();
                 string dates = shiftRow["dt"].ToString();
 
-            
+
                 DataSet attendanceDS = GetAttendanceEmployeeUsers(asm_id, dates);
                 var actual_shifttime_ends_next = new Dictionary<string, DateTime>();
 
@@ -416,9 +414,9 @@ namespace AttendancesServices
             shiftUsrEmpQry += " ORDER BY `dates` ASC";
 
             Console.Write(" {0}\n", shiftUsrEmpQry);
-            
+
             DataSet shiftUsrEmpDS = new();
-           
+
             try
             {
                 // Way 1
@@ -456,7 +454,7 @@ namespace AttendancesServices
             string attenUsrEmpQry = " SELECT `kqz_employee`.`EmployeeCode`, `kqz_card`.`CardTime` ";
             attenUsrEmpQry += " FROM `kqz_employee`	INNER JOIN `kqz_card` ON `kqz_employee`.`EmployeeID` = `kqz_card`.`EmployeeID` ";
             attenUsrEmpQry += " WHERE `kqz_card`.`CardTime` >= '" + dates + " 00:00:00' ";
-            attenUsrEmpQry += " AND `kqz_employee`.`EmployeeCode` = '"+ asm_id + "' ";
+            attenUsrEmpQry += " AND `kqz_employee`.`EmployeeCode` = '" + asm_id + "' ";
             attenUsrEmpQry += " ORDER BY `EmployeeCode` ASC, `CardTime` ASC";
 
             Console.Write(" {0}\n", attenUsrEmpQry);

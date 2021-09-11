@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
@@ -59,9 +57,9 @@ namespace AttendancesServices
             // Dictionary<string, string> shiftTimeDict;
             // var DataAttendanceRow = new Dictionary<string, Dictionary<string, Attendance>>();
 
-           
-            DateTime checkOlder = new (2015, 12, 31);
-            Dictionary<string, string> employeeUserDict = new ();
+
+            DateTime checkOlder = new(2015, 12, 31);
+            Dictionary<string, string> employeeUserDict = new();
             foreach (DataRow campaignRow in attendanceDS.Tables["Attendance"].Rows)//campaignDS.Tables["Customers"].Rows
             {
                 // CultureInfo culture = new CultureInfo("en-US");
@@ -131,7 +129,7 @@ namespace AttendancesServices
                 DictData[sap_code][NextDate]["working_hour_number"] = DictData[sap_code][NewDate]["working_hour_number"] = employeeUserDict["working_hour_number"];
                 //}
                 //string asm_id = employeeUserDict["asm_id"];
-                
+
                 Dictionary<string, string> shiftDict = GetAttendanceShift(NewDate, DictData[sap_code][NewDate]["asm_id"]);
 
                 DictData[sap_code][NextDate]["Shifttime"] = DictData[sap_code][NewDate]["Shifttime"] = shiftDict["Shifttime"].ToString();
@@ -164,7 +162,7 @@ namespace AttendancesServices
                 String actual_shifttime_ends = DictData[sap_code][NewDate]["ShiftEnd"] = Convert.ToDateTime(NewDate + " " + shiftDict["Shifttime"]).AddHours(20).ToString("yyyy-MM-dd HH:mm:ss");
                 String actual_shifttime_start_max = Convert.ToDateTime(NewDate + " " + shiftDict["Shifttime"]).AddHours(6).ToString("yyyy-MM-dd HH:mm:ss");
                 DateTime actual_shifttime_margin = Convert.ToDateTime(NewDate + " " + shiftDict["Shifttime"]).AddMinutes(15);
-                
+
                 // Console.Write(" {0}\n", shiftDict["Shifttime"]);
                 // String.IsNullOrEmpty(s);
                 // DateTime.Compare();
@@ -230,7 +228,7 @@ namespace AttendancesServices
                     {
                         TimeSpan PastShift = TimeSpan.Parse(DictData[sap_code][PastDate]["Shifttime"]);
                         TimeSpan CurrShift = TimeSpan.Parse(DictData[sap_code][NewDate]["Shifttime"]);
-                        ReslShift =  CurrShift.Subtract(PastShift);
+                        ReslShift = CurrShift.Subtract(PastShift);
 
                         Console.Write(" Shift Difference {0}\n", ReslShift);
                         Console.Write(" Difference Result {0}\n", ReslShift >= ReslShift2);
@@ -238,12 +236,12 @@ namespace AttendancesServices
 
                     }
                 }
-                
+
 
 
                 if (intialCase != 0 && resultOut != 0 && resultOut2 > 0 && resultOut3 > 0) //((resultOut3 > 0 && ReslShift >= ReslShift2) || (resultOut3 < 0 && ReslShift < ReslShift2)))
                 {
-                    Console.Write(" {0}\n","First IF");
+                    Console.Write(" {0}\n", "First IF");
                     if (!DictData[sap_code].ContainsKey(PastDate))
                     {
                         DictData[sap_code].Add(PastDate, new Dictionary<string, string>()); //{ { "sap_code", sap_code } }
@@ -315,7 +313,7 @@ namespace AttendancesServices
                     DictData[item.Key][itemL2.Key]["missed"] = "0";
                     DictData[item.Key][itemL2.Key]["difference"] = "0";
                     DictData[item.Key][itemL2.Key]["color"] = "#000";
-                    
+
                     if (String.IsNullOrEmpty(dictInner["Intimefound"]) && (!String.IsNullOrEmpty(dictInner["Outtimefound"])))
                     {
                         // $all_dates[$value['date']]['startEditable'] = false;
@@ -384,7 +382,7 @@ namespace AttendancesServices
                         Console.Write(" {0}\n", int.Parse(multiArray[1]));
                         Console.Write(" {0}\n", hours);
                         Console.Write(" {0}\n", minutes);
-                        
+
 
                         /*
                         < 0 − If fromtiming is earlier than Margin. fromtiming before Margin
@@ -431,7 +429,7 @@ namespace AttendancesServices
 
             SetAttendanceData(DictData);
             conn.Close();
-        
+
 
             /*attenUsrEmpDT.Load(attenUsrEmpQryCmd.ExecuteReader());*/
             /*  Console.Write(" {0}\n", attenUsrEmpDS);*/
@@ -447,9 +445,9 @@ namespace AttendancesServices
 
             Console.Write(" {0}\n", attenUsrEmpQry);
             // DatabaseConnection.getDBConnection();
-            
+
             // MySqlCommand attenUsrEmp = new MySqlCommand(attenUsrEmpQry, conn); 
-            DataSet attenUsrEmpDS = new ();
+            DataSet attenUsrEmpDS = new();
             // DataTable attenUsrEmpDT = new DataTable();
             // MySqlDataReader attenUsrEmpRdr;
 
@@ -467,9 +465,9 @@ namespace AttendancesServices
                 // attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
 
                 // Way 3
-                using (MySqlCommand attenUsrEmp = new (attenUsrEmpQry, conn))
+                using (MySqlCommand attenUsrEmp = new(attenUsrEmpQry, conn))
                 {
-                    using (MySqlDataAdapter attenUsrEmpDA = new (attenUsrEmp))
+                    using (MySqlDataAdapter attenUsrEmpDA = new(attenUsrEmp))
                     {
                         attenUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                         attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
@@ -486,11 +484,11 @@ namespace AttendancesServices
             {
                 conn.Dispose(); // return connection to the pool
             }*/
-           // CloseConnection();
+            // CloseConnection();
             return attenUsrEmpDS;
             // return attenUsrEmpDT;
         }
-        
+
         private Dictionary<string, string> GetAttendanceShift(string dateValue, string asmId)
         {
             // string cardTime = Convert.ToDateTime(dateValue).ToString("yyyy-MM-dd"); 
@@ -503,8 +501,8 @@ namespace AttendancesServices
 
             //OpenConection();
             string attenShiftSlr = string.Empty;
-            Dictionary<string, string> shiftTimeDict = new ();
-            using (MySqlCommand attenShiftCmd = new (attenShiftQry, conn))
+            Dictionary<string, string> shiftTimeDict = new();
+            using (MySqlCommand attenShiftCmd = new(attenShiftQry, conn))
             {
                 var tsAttendShift = attenShiftCmd.ExecuteScalar();
                 if (tsAttendShift != null)
@@ -540,15 +538,15 @@ namespace AttendancesServices
             Console.Write(" {0}\n", attenShiftQry);
 
             //OpenConection();
-            String attenShiftSlr; 
+            String attenShiftSlr;
 
-            using (MySqlCommand attenShiftCmd = new (attenShiftQry, conn))
+            using (MySqlCommand attenShiftCmd = new(attenShiftQry, conn))
             {
                 var attenShiftSlr1 = attenShiftCmd.ExecuteScalar();
-                attenShiftSlr = (attenShiftSlr1==null)?string.Empty:attenShiftSlr1.ToString();
+                attenShiftSlr = (attenShiftSlr1 == null) ? string.Empty : attenShiftSlr1.ToString();
             }
-                // Execute the query and obtain the value of the first column of the first row
-                
+            // Execute the query and obtain the value of the first column of the first row
+
             // CloseConnection();
             return attenShiftSlr;
 
@@ -596,7 +594,7 @@ namespace AttendancesServices
                         // Console.Write(dictInner["asm_id"]);
                         long count = 0;
                         count = AttendanceAsmidAndDateWiseExist(conn, dictInner["asm_id"].ToString(), itemL2.Key, count);
-                        
+
                         dictInner["proc"] = "Service";
                         dictInner["applied"] = "0";
                         dictInner["span"] = "0";
@@ -623,7 +621,7 @@ namespace AttendancesServices
             }
             finally
             {
-               
+
             }
             // Define a query returning a single row result set
             /*string updateQry = "INSERT INTO campaign_dials (asm_id, date, sap_code, title, InDatetime, Intime, OutDatetime, Outtime, shifttime, lesstime, latearrival, missed, color, Intimefound, Outtimefound, Shifttimefound, ShiftDatetime, ShiftStart, ShiftEnd, difference )";

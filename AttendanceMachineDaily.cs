@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 
 namespace AttendancesServices
 {
@@ -52,8 +51,8 @@ namespace AttendancesServices
             DataSet attendanceDS = GetAttendanceEmployeeUsers();
             var actual_shifttime_ends_next = new Dictionary<string, DateTime>();
 
-            DateTime checkOlder = new (2015, 12, 31);
-            Dictionary<string, string> employeeUserDict = new ();
+            DateTime checkOlder = new(2015, 12, 31);
+            Dictionary<string, string> employeeUserDict = new();
             foreach (DataRow campaignRow in attendanceDS.Tables["Attendance"].Rows)//campaignDS.Tables["Customers"].Rows
             {
 
@@ -412,7 +411,7 @@ namespace AttendancesServices
             // DatabaseConnection.getDBConnection();
 
             // MySqlCommand attenUsrEmp = new MySqlCommand(attenUsrEmpQry, conn); 
-            DataSet attenUsrEmpDS = new ();
+            DataSet attenUsrEmpDS = new();
             // DataTable attenUsrEmpDT = new DataTable();
             // MySqlDataReader attenUsrEmpRdr;
 
@@ -430,9 +429,9 @@ namespace AttendancesServices
                 // attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
 
                 // Way 3
-                using (MySqlCommand attenUsrEmp = new (attenUsrEmpQry, conn))
+                using (MySqlCommand attenUsrEmp = new(attenUsrEmpQry, conn))
                 {
-                    using (MySqlDataAdapter attenUsrEmpDA = new (attenUsrEmp))
+                    using (MySqlDataAdapter attenUsrEmpDA = new(attenUsrEmp))
                     {
                         attenUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                         attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
@@ -466,8 +465,8 @@ namespace AttendancesServices
 
             //OpenConection();
             string attenShiftSlr = string.Empty;
-            Dictionary<string, string> shiftTimeDict = new ();
-            using (MySqlCommand attenShiftCmd = new (attenShiftQry, conn))
+            Dictionary<string, string> shiftTimeDict = new();
+            using (MySqlCommand attenShiftCmd = new(attenShiftQry, conn))
             {
                 var tsAttendShift = attenShiftCmd.ExecuteScalar();
                 if (tsAttendShift != null)
@@ -505,7 +504,7 @@ namespace AttendancesServices
             //OpenConection();
             String attenShiftSlr;
 
-            using (MySqlCommand attenShiftCmd = new (attenShiftQry, conn))
+            using (MySqlCommand attenShiftCmd = new(attenShiftQry, conn))
             {
                 var attenShiftSlr1 = attenShiftCmd.ExecuteScalar();
                 attenShiftSlr = (attenShiftSlr1 == null) ? string.Empty : attenShiftSlr1.ToString();

@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
@@ -18,7 +15,7 @@ namespace AttendancesServices
         {
             localDate = To;
             localMonthDate = From;
-            
+
             conn = DatabaseConnection.GetDBConnection();
             conn.Open();
 
@@ -43,12 +40,13 @@ namespace AttendancesServices
 
             // OpenConection();
             Console.Write(" {0}\n", DeleteQry);
-            MySqlCommand command = new (DeleteQry, conn);
-            if (command.ExecuteNonQuery() != 1){
+            MySqlCommand command = new(DeleteQry, conn);
+            if (command.ExecuteNonQuery() != 1)
+            {
 
                 //'handled as needed, //' but this snippet will throw an exception to force a rollback
                 //throw new InvalidProgramException();
-            
+
             }
             command.Dispose();
             return;
@@ -73,7 +71,8 @@ namespace AttendancesServices
             command.Dispose();
             return;
         }
-        public void GetAbsenties() { 
+        public void GetAbsenties()
+        {
 
             string SelectChecked; // = string.Empty;
             /*
@@ -84,7 +83,7 @@ namespace AttendancesServices
              * MySqlDataReader SelectCheckRdr = SelectCheckCmd.ExecuteReader();
             */
             DataTable SelectCheckDt = UsersList();
-            Dictionary<string, string> WeeklyData = new ();
+            Dictionary<string, string> WeeklyData = new();
             Dictionary<string, string> employeeUserDict;// = new Dictionary<string, string>();
 
             foreach (DataRow SelectCheckRdr in SelectCheckDt.Rows)
@@ -107,7 +106,7 @@ namespace AttendancesServices
                     // OpenConection();
                     SelectChecked = "select count(*) from tbl_attendances_machine where asm_id = " + SelectCheckRdr["asm_id"] + " and date = '" + todayDate.ToString("yyyy-MM-dd") + "'"; //" and sap_code = " + item.Key +
                     Console.Write(" {0}\n", SelectChecked);
-                    using (MySqlCommand SelectCheckedCommand = new (SelectChecked, conn))
+                    using (MySqlCommand SelectCheckedCommand = new(SelectChecked, conn))
                     {
                         Int64 count = (Int64)SelectCheckedCommand.ExecuteScalar();
                         WeeklyData["asm_id"] = SelectCheckRdr["asm_id"].ToString();
@@ -126,7 +125,7 @@ namespace AttendancesServices
                             SetWeeklyOffData(WeeklyData, todayDate);
                         }
                     }
-                  //  }
+                    //  }
                 }
             }
             SelectCheckDt.Dispose();
@@ -142,9 +141,9 @@ namespace AttendancesServices
                                     "  and date <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
                                     " group by asm_id";
             Console.Write(" {0}\n", SelectCheck);
-            DataTable SelectCheckDt = new ();
+            DataTable SelectCheckDt = new();
 
-            using (MySqlCommand SelectCheckCmd = new (SelectCheck, conn))
+            using (MySqlCommand SelectCheckCmd = new(SelectCheck, conn))
             {
                 SelectCheckCmd.CommandType = CommandType.Text;
                 MySqlDataReader SelectCheckRdr = SelectCheckCmd.ExecuteReader();
@@ -230,7 +229,7 @@ namespace AttendancesServices
 
             // OpenConection();
             Console.Write(" {0}\n", InsertUpdateQry);
-            MySqlCommand command = new (InsertUpdateQry, conn);
+            MySqlCommand command = new(InsertUpdateQry, conn);
             if (command.ExecuteNonQuery() != 1)
             {
                 //'handled as needed, //' but this snippet will throw an exception to force a rollback
@@ -238,7 +237,7 @@ namespace AttendancesServices
             }
             command.Dispose();
             // CloseConnection();
-            return 1; 
+            return 1;
 
 
         }

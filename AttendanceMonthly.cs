@@ -1,10 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
@@ -63,8 +59,8 @@ namespace AttendancesServices
         }
         private void LinkageMonthAttendance(DateTime M1, DateTime M2, int day)
         {
-            DataSet attendanceDS =  GetMonthWiseAgentsAttendance(M1, M2);
-            
+            DataSet attendanceDS = GetMonthWiseAgentsAttendance(M1, M2);
+
             foreach (DataRow campaignRow in attendanceDS.Tables["AttendanceMonth"].Rows)//campaignDS.Tables["Customers"].Rows
             {
                 MonthlyInsertAndUpdate(campaignRow, M1, M2, day);
@@ -90,7 +86,7 @@ namespace AttendancesServices
                 " group by asm_id, year(date), month(date)";
 
             Console.Write(" {0}\n", AttendanceMonthlyQry);
-            DataSet attenUsrEmpDS = new ();
+            DataSet attenUsrEmpDS = new();
             try
             {
                 // Way 1
@@ -104,9 +100,9 @@ namespace AttendancesServices
                 // attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
 
                 // Way 3
-                using (MySqlCommand attenUsrEmp = new (AttendanceMonthlyQry, conn))
+                using (MySqlCommand attenUsrEmp = new(AttendanceMonthlyQry, conn))
                 {
-                    using (MySqlDataAdapter attenUsrEmpDA = new (attenUsrEmp))
+                    using (MySqlDataAdapter attenUsrEmpDA = new(attenUsrEmp))
                     {
                         attenUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                         attenUsrEmpDA.Fill(attenUsrEmpDS, "AttendanceMonth");
@@ -119,65 +115,65 @@ namespace AttendancesServices
             {
                 Console.WriteLine(ex.GetBaseException().Message);
             }
-            
+
             return attenUsrEmpDS;
 
 
-          /*  using (MySqlCommand employeeUserCmd = new MySqlCommand(AttendanceMonthlyQry, conn))
-            {
-                employeeUserCmd.CommandType = CommandType.Text;
-                using (MySqlDataReader attenUsrEmpRdr = employeeUserCmd.ExecuteReader())
-                {
-                    if (attenUsrEmpRdr.HasRows)
-                    {
-                        while (attenUsrEmpRdr.Read())
-                        {
-                            
-                           *//* employeeUserDict["asm_id"] = attenUsrEmpRdr["asm_id"].ToString();
-                            employeeUserDict["yr"] = attenUsrEmpRdr["yr"].ToString();
-                            employeeUserDict["mon"] = attenUsrEmpRdr["mon"].ToString();
-                            employeeUserDict["cunt"] = attenUsrEmpRdr["cunt"].ToString();
-                            employeeUserDict["pres"] = attenUsrEmpRdr["pres"].ToString();
-                            employeeUserDict["abse"] = attenUsrEmpRdr["abse"].ToString();
-                            employeeUserDict["leve"] = attenUsrEmpRdr["leve"].ToString();
-                            employeeUserDict["off"] = attenUsrEmpRdr["off"].ToString();
-                            employeeUserDict["tran"] = attenUsrEmpRdr["tran"].ToString();
-                            employeeUserDict["gazz"] = attenUsrEmpRdr["gazz"].ToString();*//*
+            /*  using (MySqlCommand employeeUserCmd = new MySqlCommand(AttendanceMonthlyQry, conn))
+              {
+                  employeeUserCmd.CommandType = CommandType.Text;
+                  using (MySqlDataReader attenUsrEmpRdr = employeeUserCmd.ExecuteReader())
+                  {
+                      if (attenUsrEmpRdr.HasRows)
+                      {
+                          while (attenUsrEmpRdr.Read())
+                          {
 
-                            MonthlyInsertAndUpdate(attenUsrEmpRdr);
+                             *//* employeeUserDict["asm_id"] = attenUsrEmpRdr["asm_id"].ToString();
+                              employeeUserDict["yr"] = attenUsrEmpRdr["yr"].ToString();
+                              employeeUserDict["mon"] = attenUsrEmpRdr["mon"].ToString();
+                              employeeUserDict["cunt"] = attenUsrEmpRdr["cunt"].ToString();
+                              employeeUserDict["pres"] = attenUsrEmpRdr["pres"].ToString();
+                              employeeUserDict["abse"] = attenUsrEmpRdr["abse"].ToString();
+                              employeeUserDict["leve"] = attenUsrEmpRdr["leve"].ToString();
+                              employeeUserDict["off"] = attenUsrEmpRdr["off"].ToString();
+                              employeeUserDict["tran"] = attenUsrEmpRdr["tran"].ToString();
+                              employeeUserDict["gazz"] = attenUsrEmpRdr["gazz"].ToString();*//*
 
-                            *//*String slug = attenUsrEmpRdr["slug"].ToString();
-                            if (slug.Contains("ALTER"))
-                            {
-                                employeeUserDict["weeklyOff"] = "alternative";
-                                employeeUserDict["working_hour"] = "08:30";
-                                employeeUserDict["working_hour_number"] = "8.5";
-                            }
-                            else if (slug.Contains("DUAL"))
-                            {
-                                employeeUserDict["weeklyOff"] = "dual";
-                                employeeUserDict["working_hour"] = "09:00";
-                                employeeUserDict["working_hour_number"] = "9.0";
-                            }
-                            else
-                            {
-                                employeeUserDict["weeklyOff"] = "single";
-                                employeeUserDict["working_hour"] = "08:00";
-                                employeeUserDict["working_hour_number"] = "8.0";
-                            }*//*
-                        }
-                    }
-                    *//*else
-                    {
-                        employeeUserDict["weeklyOff"] = "single";
-                        employeeUserDict["working_hour"] = "08:00";
-                        employeeUserDict["working_hour_number"] = "8.0";
-                    }*//*
-                }
+                              MonthlyInsertAndUpdate(attenUsrEmpRdr);
 
-            }
-            // CloseConnection();
-            return employeeUserDict;*/
+                              *//*String slug = attenUsrEmpRdr["slug"].ToString();
+                              if (slug.Contains("ALTER"))
+                              {
+                                  employeeUserDict["weeklyOff"] = "alternative";
+                                  employeeUserDict["working_hour"] = "08:30";
+                                  employeeUserDict["working_hour_number"] = "8.5";
+                              }
+                              else if (slug.Contains("DUAL"))
+                              {
+                                  employeeUserDict["weeklyOff"] = "dual";
+                                  employeeUserDict["working_hour"] = "09:00";
+                                  employeeUserDict["working_hour_number"] = "9.0";
+                              }
+                              else
+                              {
+                                  employeeUserDict["weeklyOff"] = "single";
+                                  employeeUserDict["working_hour"] = "08:00";
+                                  employeeUserDict["working_hour_number"] = "8.0";
+                              }*//*
+                          }
+                      }
+                      *//*else
+                      {
+                          employeeUserDict["weeklyOff"] = "single";
+                          employeeUserDict["working_hour"] = "08:00";
+                          employeeUserDict["working_hour_number"] = "8.0";
+                      }*//*
+                  }
+
+              }
+              // CloseConnection();
+              return employeeUserDict;*/
         }
         private long MonthlyInsertAndUpdate(DataRow attenUsrEmpRdr, DateTime M1, DateTime M2, int day)
         {
@@ -187,7 +183,7 @@ namespace AttendancesServices
             Console.Write(" {0}\n", SelectCheck);
             long count = 0;
 
-            using (MySqlCommand SelectCheckCommand = new (SelectCheck, conn))
+            using (MySqlCommand SelectCheckCommand = new(SelectCheck, conn))
             {
                 count = (long)SelectCheckCommand.ExecuteScalar();
             }
@@ -195,7 +191,7 @@ namespace AttendancesServices
             {
 
                 InsertUpdateQry = " INSERT INTO tbl_attendances_months ( asm_id, name, yr, mon, cunt, pres, abse, leve, off, tran, gazz, from_date, to_date, dayz, lesstime, latearrival, missed, total ) ";
-                InsertUpdateQry += " values ( '"+ attenUsrEmpRdr["asm_id"].ToString() + "' , '" + attenUsrEmpRdr["name"].ToString() + "' ,'" + attenUsrEmpRdr["yr"].ToString() + "' " +
+                InsertUpdateQry += " values ( '" + attenUsrEmpRdr["asm_id"].ToString() + "' , '" + attenUsrEmpRdr["name"].ToString() + "' ,'" + attenUsrEmpRdr["yr"].ToString() + "' " +
                     ", '" + attenUsrEmpRdr["mon"].ToString() + "' " +
                     ", '" + attenUsrEmpRdr["cunt"].ToString() + "' " +
                     ", '" + attenUsrEmpRdr["pres"].ToString() + "' " +
@@ -204,9 +200,9 @@ namespace AttendancesServices
                     ", '" + attenUsrEmpRdr["off"].ToString() + "' " +
                     ", '" + attenUsrEmpRdr["tran"].ToString() + "' " +
                     ", '" + attenUsrEmpRdr["gazz"].ToString() + "' " +
-                    ", '" + M1.ToString("yyyy-MM-dd") + "' "+
+                    ", '" + M1.ToString("yyyy-MM-dd") + "' " +
                     ", '" + M2.ToString("yyyy-MM-dd") + "' " +
-                    ", 'kpi' "+
+                    ", 'kpi' " +
                     ", '" + attenUsrEmpRdr["lesstime"].ToString() + "' " +
                     ", '" + attenUsrEmpRdr["latearrival"].ToString() + "' " +
                     ", '" + attenUsrEmpRdr["missed"].ToString() + "' " +
@@ -216,7 +212,8 @@ namespace AttendancesServices
             {
                 /*employeeUserDict["asm_id"] = attenUsrEmpRdr["asm_id"].ToString();
                 employeeUserDict["yr"] = attenUsrEmpRdr["yr"].ToString();
-                employeeUserDict["mon"] = attenUsrEmpRdr["mon"].ToString()*/;
+                employeeUserDict["mon"] = attenUsrEmpRdr["mon"].ToString()*/
+                ;
                 /*employeeUserDict["cunt"] = attenUsrEmpRdr["cunt"].ToString();
                 employeeUserDict["pres"] = attenUsrEmpRdr["pres"].ToString();
                 employeeUserDict["abse"] = attenUsrEmpRdr["abse"].ToString();
@@ -226,9 +223,9 @@ namespace AttendancesServices
                 employeeUserDict["gazz"] = attenUsrEmpRdr["gazz"].ToString();*/
 
                 InsertUpdateQry = " UPDATE tbl_attendances_months set " +
-                    " name = '" + attenUsrEmpRdr["name"].ToString()+"' " +
+                    " name = '" + attenUsrEmpRdr["name"].ToString() + "' " +
                     ", cunt = '" + attenUsrEmpRdr["cunt"].ToString() + "' " +
-                    ", pres = '" + attenUsrEmpRdr["pres"].ToString()+"' " +
+                    ", pres = '" + attenUsrEmpRdr["pres"].ToString() + "' " +
                     ", abse = '" + attenUsrEmpRdr["abse"].ToString() + "' " +
                     ", leve = '" + attenUsrEmpRdr["leve"].ToString() + "' " +
                     ", off = '" + attenUsrEmpRdr["off"].ToString() + "' " +
@@ -241,16 +238,16 @@ namespace AttendancesServices
                     ", latearrival = '" + attenUsrEmpRdr["latearrival"].ToString() + "' " +
                     ", missed = '" + attenUsrEmpRdr["missed"].ToString() + "' ";
 
-                InsertUpdateQry += " where asm_id = " + attenUsrEmpRdr["asm_id"] + 
+                InsertUpdateQry += " where asm_id = " + attenUsrEmpRdr["asm_id"] +
                     " and yr = '" + attenUsrEmpRdr["yr"] + "' " +
-                    " and mon = '"+ attenUsrEmpRdr["mon"] +"' " +
+                    " and mon = '" + attenUsrEmpRdr["mon"] + "' " +
                     " and dayz = 'kpi' "; // + " and sap_code = " + item.Key + "";
 
             }
-            
+
             Console.Write(" {0}\n", InsertUpdateQry);
 
-            using (MySqlCommand command = new (InsertUpdateQry, conn))
+            using (MySqlCommand command = new(InsertUpdateQry, conn))
             {
                 count = command.ExecuteNonQuery();
             }

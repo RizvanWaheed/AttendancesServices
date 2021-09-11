@@ -2,13 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    sealed class LeaveGazetted: CommonQueries, IDisposable
+    sealed class LeaveGazetted : CommonQueries, IDisposable
     {
         private readonly DateTime localDate; // = DateTime.Now.AddDays(-1);
         private readonly DateTime localMonthDate; // = DateTime.Now.AddMonths(-2);
@@ -38,7 +35,7 @@ namespace AttendancesServices
             // string SelectCheckedIn = string.Empty; " and year(date) = '" + localDate.ToString("yyyy") + "' " +
             string SelectCheckedIn = " select date, type, form " +
                                      " from tbl_leave_gazetted " +
-                                     " where status = 1 " +                                     
+                                     " where status = 1 " +
                                      " and ( " +
                                      " ( date <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
                                      "      AND date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' ) " +
@@ -51,19 +48,19 @@ namespace AttendancesServices
             Console.Write(" {0}\n", SelectCheckedIn);
 
             //OpenConection();
-            DataTable SelectCheckedInDT = new ();
+            DataTable SelectCheckedInDT = new();
             Dictionary<string, string> employeeUserDict;
 
-            using (MySqlCommand SelectCheckedInCmd = new (SelectCheckedIn, conn))
+            using (MySqlCommand SelectCheckedInCmd = new(SelectCheckedIn, conn))
             {
-                using (MySqlDataAdapter attenUsrEmpDA = new (SelectCheckedInCmd))  //using (MySqlDataReader SelectCheckedInRdr = SelectCheckedInCmd.ExecuteReader())
+                using (MySqlDataAdapter attenUsrEmpDA = new(SelectCheckedInCmd))  //using (MySqlDataReader SelectCheckedInRdr = SelectCheckedInCmd.ExecuteReader())
                 {
                     attenUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                     attenUsrEmpDA.Fill(SelectCheckedInDT);
 
                     //string SelectChecked = string.Empty;
 
-                    Dictionary<string, string> IUvalues = new ();
+                    Dictionary<string, string> IUvalues = new();
                     // Dictionary<string, string> EmployeeUserDict = new Dictionary<string, string>();
 
                     foreach (DataRow SelectCheckedInRdr in SelectCheckedInDT.Rows) //if (SelectCheckedInRdr.HasRows)
@@ -72,7 +69,7 @@ namespace AttendancesServices
                         //{
                         DataTable SelectCheckDt = UsersList();
                         foreach (DataRow SelectCheckRdr in SelectCheckDt.Rows)
-                        {   
+                        {
                             long count = 0;
                             count = AttendanceAsmidAndDateWiseExist(conn, SelectCheckRdr["asm_id"].ToString(), SelectCheckedInRdr["date"].ToString(), count);
                             if (count <= 0)
@@ -86,16 +83,16 @@ namespace AttendancesServices
                                 if ((form.Contains("weekly_off") && form.Contains(employeeUserDict["weeklyOff"])) || form.Contains("volunteer"))
                                 {
                                     Dictionary<string, string> leave = GetLeaveEntitle(form);
-                                    
+
                                     IUvalues["type"] = leave["type"];
                                     IUvalues["color"] = leave["color"];
                                     /* IUvalues["title"] = leave["title"];
-                                    IUvalues["color"] = leave["color"];*/                                   
-                                    
+                                    IUvalues["color"] = leave["color"];*/
+
                                     IUvalues["employee_id"] = employeeUserDict["employee_id"];
                                     IUvalues["name"] = employeeUserDict["name"];
                                     IUvalues["asm_id"] = SelectCheckRdr["asm_id"].ToString();
-                                    IUvalues["sap_code"] = SelectCheckRdr["asm_id"].ToString();                                    
+                                    IUvalues["sap_code"] = SelectCheckRdr["asm_id"].ToString();
                                     IUvalues["applied"] = "0";
                                     IUvalues["span"] = "0";
                                     IUvalues["proc"] = "Service";
@@ -120,14 +117,14 @@ namespace AttendancesServices
                                 }
                                 //SetWeeklyOffData(WeeklyData, Convert.ToDateTime(SelectCheckedInRdr["date"]));
                             }
-                            
+
 
                         }
                         //}
                         SelectCheckDt.Dispose();
                     }
-                   
-                }                    
+
+                }
             }
 
             conn.Close();
@@ -137,9 +134,9 @@ namespace AttendancesServices
         {
             string SelectCheck = "select count(*) cnt, asm_id from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' and date <= '" + localDate.ToString("yyyy-MM-dd") + "' group by asm_id";
             Console.Write(" {0}\n", SelectCheck);
-            DataTable SelectCheckDt = new ();
+            DataTable SelectCheckDt = new();
 
-            using (MySqlCommand SelectCheckCmd = new (SelectCheck, conn))
+            using (MySqlCommand SelectCheckCmd = new(SelectCheck, conn))
             {
                 SelectCheckCmd.CommandType = CommandType.Text;
                 MySqlDataReader SelectCheckRdr = SelectCheckCmd.ExecuteReader();

@@ -2,13 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    class CommonQueries: Common
+    class CommonQueries : Common
     {
         string SelectCheck;
         public long AttendanceAsmidAndYearNadMonthAndDayWiseExist(MySqlConnection conn, string AsmID, int year, int month, string type, int dayofweek, long count)
@@ -18,13 +15,13 @@ namespace AttendancesServices
 
             SelectCheck = " select count(*) from tbl_attendances_machine " +
                 " where asm_id = " + AsmID + " " +
-                " and YEAR(date) = '"+ year + "' " +
+                " and YEAR(date) = '" + year + "' " +
                 " and MONTH(date) = '" + month + "' " +
-                " and type = '"+ type +"' " +
-                " and WEEKDAY(date) = '"+ dayofweek + "'";
+                " and type = '" + type + "' " +
+                " and WEEKDAY(date) = '" + dayofweek + "'";
 
             Console.Write(" {0}\n", SelectCheck);
-            using (MySqlCommand SelectCheckCommand = new (SelectCheck, conn))
+            using (MySqlCommand SelectCheckCommand = new(SelectCheck, conn))
             {
                 count = (long)SelectCheckCommand.ExecuteScalar();
             }
@@ -35,7 +32,7 @@ namespace AttendancesServices
             SelectCheck = "select count(*) from tbl_attendances_machine where asm_id = " + AsmID + " and date = '" + Convert.ToDateTime(DateA).ToString("yyyy-MM-dd") + "'";
 
             Console.Write(" {0}\n", SelectCheck);
-            using (MySqlCommand SelectCheckCommand = new (SelectCheck, conn))
+            using (MySqlCommand SelectCheckCommand = new(SelectCheck, conn))
             {
                 count = (long)SelectCheckCommand.ExecuteScalar();
             }
@@ -44,7 +41,7 @@ namespace AttendancesServices
         public static long AttendaceInsertOrUpdate(MySqlConnection conn, string Qry, long count)
         {
 
-            using (MySqlCommand command = new (Qry, conn))
+            using (MySqlCommand command = new(Qry, conn))
             {
                 count = command.ExecuteNonQuery();
             }
@@ -52,17 +49,17 @@ namespace AttendancesServices
         }
         public static long AttendaceInsertUpdate(MySqlConnection conn, string Qry, long count)
         {
-            using (MySqlCommand command = new (Qry, conn))
+            using (MySqlCommand command = new(Qry, conn))
             {
                 count = command.ExecuteNonQuery();
             }
             return count;
         }
-        public static long AttendaceInsert(MySqlConnection conn, Dictionary<string,string> dictInner, long count)
+        public static long AttendaceInsert(MySqlConnection conn, Dictionary<string, string> dictInner, long count)
         {
             string InsertUpdateQry;
             string insertColumns = " asm_id, date  ";
-            string insertValues = " "+ dictInner["asm_id"] + ", '" + Convert.ToDateTime(dictInner["date"]).ToString("yyyy-MM-dd") + "' ";
+            string insertValues = " " + dictInner["asm_id"] + ", '" + Convert.ToDateTime(dictInner["date"]).ToString("yyyy-MM-dd") + "' ";
 
             if (!string.IsNullOrEmpty(dictInner["sap_code"]))
             {
@@ -84,7 +81,7 @@ namespace AttendancesServices
                 insertColumns += ", title ";
                 insertValues += ", '" + dictInner["title"] + "' ";
             }
-            if (dictInner.ContainsKey("sub_title") &&  !string.IsNullOrEmpty(dictInner["sub_title"]))
+            if (dictInner.ContainsKey("sub_title") && !string.IsNullOrEmpty(dictInner["sub_title"]))
             {
                 insertColumns += ", sub_title ";
                 insertValues += ", '" + dictInner["sub_title"] + "' ";
@@ -196,7 +193,7 @@ namespace AttendancesServices
 
             Console.Write(" {0}\n", InsertUpdateQry);
 
-            using (MySqlCommand command = new (InsertUpdateQry, conn))
+            using (MySqlCommand command = new(InsertUpdateQry, conn))
             {
                 count = command.ExecuteNonQuery();
             }
@@ -231,7 +228,7 @@ namespace AttendancesServices
             {
                 updateColumns += ", employee_id = '" + dictInner["employee_id"] + "' ";
             }
-            if (dictInner.ContainsKey("title") &&  !string.IsNullOrEmpty(dictInner["title"]))
+            if (dictInner.ContainsKey("title") && !string.IsNullOrEmpty(dictInner["title"]))
             {
                 updateColumns += ", title = '" + dictInner["title"] + "' ";
             }
@@ -304,7 +301,7 @@ namespace AttendancesServices
 
             Console.Write(" {0}\n", InsertUpdateQry);
 
-            using (MySqlCommand command = new (InsertUpdateQry, conn))
+            using (MySqlCommand command = new(InsertUpdateQry, conn))
             {
                 count = command.ExecuteNonQuery();
             }
@@ -336,9 +333,9 @@ namespace AttendancesServices
 
 
             Console.Write(" {0}\n", employyeeUserQry);
-            Dictionary<string, string> employeeUserDict = new ();
+            Dictionary<string, string> employeeUserDict = new();
             // OpenConection();
-            using (MySqlCommand employeeUserCmd = new (employyeeUserQry, conn))
+            using (MySqlCommand employeeUserCmd = new(employyeeUserQry, conn))
             {
                 // MySqlCommand employeeUserCmd = new MySqlCommand(employyeeUserQry, conn);
                 employeeUserCmd.CommandType = CommandType.Text;

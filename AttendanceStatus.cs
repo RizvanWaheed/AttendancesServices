@@ -2,13 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    sealed class AttendanceStatus : Common, IDisposable 
+    sealed class AttendanceStatus : Common, IDisposable
     {
         private readonly DateTime localDate;
         private readonly DateTime localMonthDate;
@@ -49,8 +46,8 @@ namespace AttendancesServices
                     }
                     SelectCheck = "select count(*) from tbl_attendances_machine where asm_id = " + DailyAttendanceDR["asm_id"] + " and date = '" + Convert.ToDateTime(DailyAttendanceDR["date"]).ToString("yyyy-MM-dd") + "'";
                     Console.Write(" {0}\n", SelectCheck);
-                    MySqlCommand SelectCheckCommand = new (SelectCheck, conn);
-                    
+                    MySqlCommand SelectCheckCommand = new(SelectCheck, conn);
+
                     /*SelectCheckCommand.Parameters.AddWithValue("@asm_id", dictInner["asm_id"]);
                     SelectCheckCommand.Parameters.AddWithValue("@date", "'"+itemL2.Key+"'");
                     SelectCheckCommand.Parameters.AddWithValue("@sap_code", "'" + item.Key + "'");*/
@@ -64,7 +61,7 @@ namespace AttendancesServices
 
                     Int64 count = (Int64)SelectCheckCommand.ExecuteScalar();
                     SelectCheckCommand.Dispose();
-                    TimeSpan actualHours = new (0, 8, 0, 0);
+                    TimeSpan actualHours = new(0, 8, 0, 0);
                     //int result = TimeSpan.Compare(actualHours, (TimeSpan)DailyAttendanceDR["title"]);
                     if (count <= 0)
                     {
@@ -78,7 +75,7 @@ namespace AttendancesServices
                          */
                         insertColumns += ", type ";
                         insertValues += ", '" + leave["type"] + "' ";
-                        
+
                         /*if (String.Equals(type, "off") || String.Equals(type, "weekly_off"))
                         {
                             insertColumns += ", type ";
@@ -122,7 +119,7 @@ namespace AttendancesServices
                         }*/
 
                         insertColumns += ", color ";
-                        insertValues += ", '"+ leave["color"] + "' ";
+                        insertValues += ", '" + leave["color"] + "' ";
 
                         insertColumns += ", name ";
                         insertValues += ", '" + DailyAttendanceDR["name"] + "' ";
@@ -131,8 +128,8 @@ namespace AttendancesServices
                         insertValues += ", '" + DailyAttendanceDR["employee_id"] + "' ";
 
                         insertColumns += ", sub_title ";
-                        insertValues += ", '" + leave["title"] + "' "; 
-                        
+                        insertValues += ", '" + leave["title"] + "' ";
+
                         insertColumns += ", title ";
                         insertValues += ", '" + leave["title"] + "' ";
 
@@ -191,7 +188,7 @@ namespace AttendancesServices
                         Console.Write(" {0}\n", InsertUpdateQry);
 
 
-                        using (MySqlCommand command = new (InsertUpdateQry, conn))
+                        using (MySqlCommand command = new(InsertUpdateQry, conn))
                         {
                             if (command.ExecuteNonQuery() != 1)
                             {
@@ -201,7 +198,7 @@ namespace AttendancesServices
                         }
                     }
 
-                    
+
 
                     /* Console.Write(" {0}\n", DailyAttendanceDR["date"]);
                      Console.Write(" {0}\n", DailyAttendanceDR["sip"]);
@@ -245,7 +242,7 @@ namespace AttendancesServices
 
             // OpenConection();
             // MySqlCommand attenUsrEmp = new MySqlCommand(attenUsrEmpQry, conn);     
-            DataSet DailySelectDS = new ();        
+            DataSet DailySelectDS = new();
             // DataTable DailySelectDT = new DataTable();
             // MySqlDataReader attenUsrEmpRdr;
             try
@@ -261,9 +258,9 @@ namespace AttendancesServices
                 // DailySelectDA.Fill(DailySelectDS, "DailyAttendance");
                 // Way 3
 
-                using (MySqlCommand DailySelectCmd = new (DailySelectQry, conn))
+                using (MySqlCommand DailySelectCmd = new(DailySelectQry, conn))
                 {
-                    using (MySqlDataAdapter DailySelectDA = new (DailySelectCmd))
+                    using (MySqlDataAdapter DailySelectDA = new(DailySelectCmd))
                     {
                         DailySelectDA.SelectCommand.CommandType = CommandType.Text;
                         // attenUsrEmpDA.Fill(DailySelectDT);

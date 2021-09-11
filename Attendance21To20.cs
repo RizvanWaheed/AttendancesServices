@@ -1,10 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
@@ -87,7 +83,7 @@ namespace AttendancesServices
                 " group by asm_id";
 
             Console.Write(" {0}\n", AttendanceMonthlyQry);
-            DataSet attenUsrEmpDS = new ();
+            DataSet attenUsrEmpDS = new();
             try
             {
                 // Way 1
@@ -101,9 +97,9 @@ namespace AttendancesServices
                 // attenUsrEmpDA.Fill(attenUsrEmpDS, "Attendance");
 
                 // Way 3
-                using (MySqlCommand attenUsrEmp = new (AttendanceMonthlyQry, conn))
+                using (MySqlCommand attenUsrEmp = new(AttendanceMonthlyQry, conn))
                 {
-                    using (MySqlDataAdapter attenUsrEmpDA = new (attenUsrEmp))
+                    using (MySqlDataAdapter attenUsrEmpDA = new(attenUsrEmp))
                     {
                         attenUsrEmpDA.SelectCommand.CommandType = CommandType.Text;
                         attenUsrEmpDA.Fill(attenUsrEmpDS, "AttendanceMonth");
@@ -131,7 +127,7 @@ namespace AttendancesServices
             Console.Write(" {0}\n", SelectCheck);
             long count = 0;
 
-            using (MySqlCommand SelectCheckCommand = new (SelectCheck, conn))
+            using (MySqlCommand SelectCheckCommand = new(SelectCheck, conn))
             {
                 count = (long)SelectCheckCommand.ExecuteScalar();
             }
@@ -195,7 +191,7 @@ namespace AttendancesServices
 
             Console.Write(" {0}\n", InsertUpdateQry);
 
-            using (MySqlCommand command = new (InsertUpdateQry, conn))
+            using (MySqlCommand command = new(InsertUpdateQry, conn))
             {
                 count = command.ExecuteNonQuery();
             }

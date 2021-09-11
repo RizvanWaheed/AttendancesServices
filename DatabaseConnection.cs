@@ -1,10 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
@@ -19,9 +15,9 @@ namespace AttendancesServices
                 {
                     string connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
                     databaseConnection = new MySqlConnection(connectionString);
-                   
+
                 }
-                catch (  MySqlException ex)
+                catch (MySqlException ex)
                 {
                     switch (ex.Number)
                     {
@@ -37,16 +33,16 @@ namespace AttendancesServices
                 {
                     Console.WriteLine(ex.GetBaseException().Message);
                 }
-                
+
             }
             return databaseConnection;
         }
-     
-       /* public static void Disconnect()
-        {
-            databaseConnection.Close();
-            databaseConnection.Dispose();
-            databaseConnection = null;
-        }*/
+
+        /* public static void Disconnect()
+         {
+             databaseConnection.Close();
+             databaseConnection.Dispose();
+             databaseConnection = null;
+         }*/
     }
 }

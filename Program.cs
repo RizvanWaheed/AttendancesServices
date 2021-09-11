@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace AttendancesServices
@@ -17,9 +15,9 @@ namespace AttendancesServices
             // Keep the console window open in debug mode.
             Console.WriteLine("Press any key to exit.");
             OnTimedEventFirst();
-            System.Timers.Timer timer = new ();
+            System.Timers.Timer timer = new();
             timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            timer.Interval = 2400000; //number in milisecinds  
+            timer.Interval = 4800000; //number in milisecinds  
             timer.Enabled = true;
 
             /*Task task = new Task(() =>
@@ -54,15 +52,39 @@ namespace AttendancesServices
         }
         private static void OnTimedEventFirst()
         {
-            AttendanceTask svc = new ();
-            svc.AttendanceTaskServicesInitials();
+            /* AttendanceTask svc = new();
+             svc.AttendanceTaskServicesInitials();*/
+            DateTime FromDate = DateTime.Now.AddDays(-150);
+            DateTime ToDate = DateTime.Now.AddDays(-1);
+
+            AttendanceTask svc = new(FromDate, ToDate);
+            try
+            {
+                svc.AttendanceTaskServices();
+            }
+            finally
+            {
+                svc.Dispose();
+            }
+
+
         }
         private static void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             Console.WriteLine("I am in time lapsed.");
-            //new Service();
-            AttendanceTask svc = new ();
-            svc.AttendanceTaskServices();
+
+            DateTime FromDate = DateTime.Now.AddDays(-1);
+            DateTime ToDate = DateTime.Now;
+
+            AttendanceTaskDaily svcd = new(FromDate, ToDate);
+            try
+            {
+                svcd.DailyServicesAttendance();
+            }
+            finally
+            {
+                svcd.Dispose();
+            }
         }
     }
 }
