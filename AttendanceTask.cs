@@ -6,21 +6,84 @@ using System.Threading.Tasks;
 
 namespace AttendancesServices
 {
-    class AttendanceTask
+    class AttendanceTask : IDisposable
     {
-        // private readonly DateTime LocalDayDummy = DateTime.Now.AddDays(-10);
-        private readonly DateTime LocalBeforeForteen = DateTime.Now.AddDays(-7);
-        private readonly DateTime LocalBeforeSeven = DateTime.Now.AddDays(-2);
-        private readonly DateTime LocalDay = DateTime.Now;//.AddDays(-3);
-        private readonly DateTime LocalYesterday = DateTime.Now.AddDays(-1);
-        private readonly DateTime LocalBeforeYesterday = DateTime.Now.AddDays(-2);
-        // private readonly DateTime LocalSingleDate = DateTime.Now.AddMonths(-1);
-        // private readonly DateTime LocalMonthDate = DateTime.Now.AddMonths(-2);
-        // private readonly DateTime LocalMonthDate = DateTime.Now.AddDays(-45);
-        private readonly DateTime LocalMonthDate = DateTime.Now.AddDays(-142);
-        private readonly DateTime LocalMonthDateAbs = DateTime.Now.AddDays(-140);
+        private readonly DateTime FromDate;
+        private readonly DateTime ToDate;
+        private readonly DateTime AbsentFromDate;
+        private readonly DateTime AbsentToDate;
+        private Thread AmThread, KpiThread, LeaveThread, GazThread, AbsentiesRemoveThread, DailyThread, EmployeeLogMappingThread, AbsentiesThread; //OffThread, 
 
-        private Thread AmThread, KpiThread, LeaveThread, GazThread; //OffThread, 
+
+        public AttendanceTask(DateTime fromDate, DateTime toDate)
+        {
+            ToDate = toDate;
+            FromDate = fromDate;
+            AbsentFromDate = toDate.AddDays(-145);
+            AbsentToDate = toDate.AddDays(-7);
+
+            Console.WriteLine(".............................In Attendance Task ..........................");
+        }
+        public void AttendanceTaskServices()
+        {
+            AbsentiesRemoveThread = new(RunRemoveAbsent);
+            AbsentiesRemoveThread.Start();
+            AbsentiesRemoveThread.Join();
+
+            DailyThread = new(RunDaily);
+            DailyThread.Start();
+            DailyThread.Join();
+
+            KpiThread = new(RunKpiAttendance);
+            KpiThread.Start();
+            KpiThread.Join();
+
+            AmThread = new(RunMachineAttendance);
+            AmThread.Start();
+            AmThread.Join();
+
+            LeaveThread = new(RunLeaveApplications);
+            LeaveThread.Start();
+            LeaveThread.Join();
+
+            GazThread = new(RunGazetted); // GazettedOff.GetGazetted();
+            GazThread.Start();
+            GazThread.Join();
+
+            EmployeeLogMappingThread = new(RunEmployeeLogMapping);
+            EmployeeLogMappingThread.Start();
+            EmployeeLogMappingThread.Join();
+
+            AbsentiesThread = new(RunAbsent);
+            AbsentiesThread.Start();
+            AbsentiesThread.Join();
+
+            Thread MonthlyAttendanceThread = new(Monthly); // GazettedOff.GetGazetted();
+            MonthlyAttendanceThread.Start();
+            MonthlyAttendanceThread.Join();
+
+            Thread Monthly21To20AttendanceThread = new(Monthly21To20); // GazettedOff.GetGazetted();
+            Monthly21To20AttendanceThread.Start();
+            Monthly21To20AttendanceThread.Join();
+
+            /*if (localDate.Day == 24 && now >= start5 && now <= start7)
+            {
+                Thread AbsentiesThread = new Thread(RunAbsent);
+                AbsentiesThread.Start();
+                AbsentiesThread.Join();
+            }
+            if (localDate.Day == 25 && now <= start7)
+            {
+            */
+            /* 
+             * AttendanceMonthly MonthlyAttendance = new AttendanceMonthly();
+             Thread MonthlyAttendanceThread = new Thread(MonthlyAttendance.GetAttendanceApproval); // GazettedOff.GetGazetted();
+             MonthlyAttendanceThread.Start();
+             MonthlyAttendanceThread.Join();*/
+            //}
+        }
+
+        
 
         /* HttpClient client = new HttpClient();*/
         // String strHostName = string.Empty;
@@ -30,7 +93,7 @@ namespace AttendancesServices
         // }
         public void RunRemoveAbsent()
         {
-            Absent Absenties = new (LocalMonthDate, LocalBeforeForteen);
+            Absent Absenties = new (AbsentFromDate, AbsentToDate);
             try
             {
                 Absenties.RemoveAbsenties();
@@ -40,45 +103,21 @@ namespace AttendancesServices
                 Absenties.Dispose();
             }
         }
-        public void RunRemoveAbsentDaily()
+        public void RunDaily()
         {
-            Absent Absenties = new(LocalBeforeForteen, LocalBeforeSeven);
+            AttendanceStatus daily = new(FromDate, ToDate);
             try
             {
-                Absenties.RemoveAbsentiesDaily();
+                daily.GetDailyAttendance();
             }
             finally
             {
-                Absenties.Dispose();
-            }
-        }
-        public void RunMachineAttendance()
-        {
-            AttendanceMachine Attendmachine = new (LocalMonthDate, LocalDay);
-            try
-            {
-                Attendmachine.GetMachineAttendance();
-            }
-            finally
-            {
-                Attendmachine.Dispose();
-            }
-        }
-        public void RunMachineAttendanceDaily()
-        {
-            AttendanceMachineDaily Attendmachinedaily = new (LocalYesterday, LocalDay);
-            try
-            {
-                Attendmachinedaily.GetMachineAttendance();
-            }
-            finally
-            {
-                Attendmachinedaily.Dispose();
+                daily.Dispose();
             }
         }
         public void RunKpiAttendance()
         {
-            AttendanceKpi kpiAttend = new (LocalMonthDate, LocalYesterday);
+            AttendanceKpi kpiAttend = new(FromDate, ToDate);
             try
             {
                 kpiAttend.GetKpiAttendance();
@@ -101,33 +140,21 @@ namespace AttendancesServices
               });*/
 
         }
-        public void RunKpiAttendanceDaily()
+        public void RunMachineAttendance()
         {
-            AttendanceKpiDaily kpiAttendDaily = new (LocalYesterday, LocalDay);
+            AttendanceMachine Attendmachine = new (FromDate, ToDate);
             try
             {
-                kpiAttendDaily.GetKpiAttendance();
+                Attendmachine.GetMachineAttendance();
             }
             finally
             {
-                kpiAttendDaily.Dispose();
-            }
-        }
-        public void RunEmployeeLogMapping()
-        {
-            EmployeeLogMapping EmployeeLogMap = new (LocalMonthDate, LocalDay);
-            try
-            {
-                EmployeeLogMap.GetEmployeeLogMappaing();
-            }
-            finally
-            {
-                EmployeeLogMap.Dispose();
+                Attendmachine.Dispose();
             }
         }
         public void RunLeaveApplications()
         {
-            LeaveApplication LeaveApp = new (LocalMonthDate, LocalDay);
+            LeaveApplication LeaveApp = new (FromDate, ToDate);
             try
             {
                 LeaveApp.GetLeaveApplications();
@@ -137,45 +164,9 @@ namespace AttendancesServices
                 LeaveApp.Dispose();
             }
         }
-        public void RunLeaveApplicationsDaily()
-        {
-            LeaveApplicationDaily LeaveAppDaily = new (LocalYesterday, LocalDay);
-            try
-            {
-                LeaveAppDaily.GetLeaveApplications();
-            }
-            finally
-            {
-                LeaveAppDaily.Dispose();
-            }
-        }
-        public void RunDaily()
-        {
-            AttendanceStatus daily = new (LocalMonthDate, LocalYesterday);
-            try
-            {
-                daily.GetDailyAttendance();
-            }
-            finally
-            {
-                daily.Dispose();
-            }
-        }
-        public void RunAttendanceStatusDaily()
-        {
-            AttendanceStatusDaily daily = new (LocalYesterday, LocalDay);
-            try
-            {
-                daily.GetDailyAttendance();
-            }
-            finally
-            {
-                daily.Dispose();
-            }
-        }
         public void RunGazetted()
         {
-            LeaveGazetted GazettedOff = new (LocalMonthDate, LocalYesterday);
+            LeaveGazetted GazettedOff = new (FromDate, ToDate);
             try
             {
                 GazettedOff.GetGazetted();
@@ -185,30 +176,32 @@ namespace AttendancesServices
                 GazettedOff.Dispose();
             }
         }
-        public void RunGazettedDaily()
+        public void RunEmployeeLogMapping()
         {
-            LeaveGazetted GazettedOff = new(LocalYesterday, LocalDay);
+            EmployeeLogMapping EmployeeLogMap = new (FromDate, ToDate);
             try
             {
-                GazettedOff.GetGazetted();
+                EmployeeLogMap.GetEmployeeLogMappaing();
             }
             finally
             {
-                GazettedOff.Dispose();
+                EmployeeLogMap.Dispose();
             }
         }
-        public void RunShiftDaily()
+        public void RunAbsent()
         {
-            AttendancesShifts AttendShift = new(LocalYesterday, LocalDay);
+            Absent Absenties = new (AbsentFromDate, AbsentToDate);
             try
             {
-                AttendShift.GetAttendanceShiftWise();
+                Absenties.GetAbsenties();
             }
             finally
             {
-                AttendShift.Dispose();
+                Absenties.Dispose();
             }
         }
+        
+        
         /* public void RunWeeklyOff()
         {
            WeeklyOff OffWeeks = new WeeklyOff(LocalMonthDate, LocalYesterday);
@@ -221,30 +214,6 @@ namespace AttendancesServices
                 OffWeeks.Dispose();
             }
         }*/
-        public void RunAbsent()
-        {
-            Absent Absenties = new (LocalMonthDateAbs, LocalBeforeForteen);
-            try
-            {
-                Absenties.GetAbsenties();
-            }
-            finally
-            {
-                Absenties.Dispose();
-            }
-        }
-        public void RunAbsentDaily()
-        {
-            Absent Absenties = new(LocalBeforeForteen, LocalBeforeSeven);
-            try
-            {
-                Absenties.GetAbsenties();
-            }
-            finally
-            {
-                Absenties.Dispose();
-            }
-        }
         public void Monthly()
         {
 
@@ -281,127 +250,6 @@ namespace AttendancesServices
             finally
             {
                 Monthly21To20Attendance.Dispose();
-            }
-        }
-        public void AttendanceTaskServicesInitials()
-        {
-            Thread AbsentiesRemoveThread = new(RunRemoveAbsent);
-            AbsentiesRemoveThread.Start();
-            AbsentiesRemoveThread.Join();
-
-            Thread DailyThread = new(RunDaily);
-            DailyThread.Start();
-            DailyThread.Join();
-
-            KpiThread = new(RunKpiAttendance);
-            KpiThread.Start();
-            KpiThread.Join();
-
-            AmThread = new(RunMachineAttendance);
-            AmThread.Start();
-            AmThread.Join();
-
-            LeaveThread = new (RunLeaveApplications);
-            LeaveThread.Start();
-            LeaveThread.Join();
-            
-            GazThread = new (RunGazetted); // GazettedOff.GetGazetted();
-            GazThread.Start();
-            GazThread.Join();
-
-            Thread EmployeeLogMappingThread = new (RunEmployeeLogMapping);
-            EmployeeLogMappingThread.Start();
-            EmployeeLogMappingThread.Join();
-
-            Thread AbsentiesThread = new (RunAbsent);
-            AbsentiesThread.Start();
-            AbsentiesThread.Join();
-           
-            Thread MonthlyAttendanceThread = new (Monthly); // GazettedOff.GetGazetted();
-            MonthlyAttendanceThread.Start();
-            MonthlyAttendanceThread.Join();
-
-            Thread Monthly21To20AttendanceThread = new (Monthly21To20); // GazettedOff.GetGazetted();
-            Monthly21To20AttendanceThread.Start();
-            Monthly21To20AttendanceThread.Join();
-
-            /*if (localDate.Day == 24 && now >= start5 && now <= start7)
-            {
-                Thread AbsentiesThread = new Thread(RunAbsent);
-                AbsentiesThread.Start();
-                AbsentiesThread.Join();
-            }
-            if (localDate.Day == 25 && now <= start7)
-            {
-            */
-            /* 
-             * AttendanceMonthly MonthlyAttendance = new AttendanceMonthly();
-             Thread MonthlyAttendanceThread = new Thread(MonthlyAttendance.GetAttendanceApproval); // GazettedOff.GetGazetted();
-             MonthlyAttendanceThread.Start();
-             MonthlyAttendanceThread.Join();*/
-            //}
-        }
-        public void AttendanceTaskServices()
-        {
-            DateTime localDate = DateTime.Now;
-
-            TimeSpan start1 = TimeSpan.Parse("01:00");
-            TimeSpan start3 = TimeSpan.Parse("03:00");
-            TimeSpan start4 = TimeSpan.Parse("04:00");
-            TimeSpan start5 = TimeSpan.Parse("05:00");
-            TimeSpan start7 = TimeSpan.Parse("07:00");
-
-            TimeSpan end = TimeSpan.Parse("06:00"); // 4 AM
-            TimeSpan now = DateTime.Now.TimeOfDay;
-
-            Thread AbsentiesRemoveThread = new(RunRemoveAbsentDaily);
-            AbsentiesRemoveThread.Start();
-            AbsentiesRemoveThread.Join();
-
-            Thread DailyThread = new (RunAttendanceStatusDaily);
-            DailyThread.Start();
-            DailyThread.Join();
-
-            LeaveThread = new (RunLeaveApplicationsDaily);
-            LeaveThread.Start();
-            LeaveThread.Join();
-
-            KpiThread = new (RunKpiAttendanceDaily);
-            KpiThread.Start();
-            KpiThread.Join();
-
-            AmThread = new (RunMachineAttendanceDaily);
-            AmThread.Start();
-            AmThread.Join();
-
-            Thread RunShiftDailyTd = new(RunShiftDaily);
-            RunShiftDailyTd.Start();
-            RunShiftDailyTd.Join();
-
-            if (now <= start5)
-            {
-                GazThread = new(RunGazettedDaily); // GazettedOff.GetGazetted();
-                GazThread.Start();
-                GazThread.Join();
-
-                Thread EmployeeLogMappingThread = new (RunEmployeeLogMapping);
-                EmployeeLogMappingThread.Start();
-                EmployeeLogMappingThread.Join();
-
-                Thread AbsentiesThreadDaily = new (RunAbsentDaily);
-                AbsentiesThreadDaily.Start();
-                AbsentiesThreadDaily.Join();
-
-            }
-            if (now <= start7 && now > start5) //localDate.Day == 25 &&
-            {
-                Thread MonthlyAttendanceThread = new (Monthly); // GazettedOff.GetGazetted();
-                MonthlyAttendanceThread.Start();
-                MonthlyAttendanceThread.Join();
-
-                Thread Monthly21To20AttendanceThread = new (Monthly21To20); // GazettedOff.GetGazetted();
-                Monthly21To20AttendanceThread.Start();
-                Monthly21To20AttendanceThread.Join();
             }
         }
         public void AttendanceTaskServicesTimeWise()
@@ -625,6 +473,18 @@ namespace AttendancesServices
 
             oThread.Start();
             oThread.Join();*/
+        }
+        public void Dispose()
+
+        {
+            // Using the dispose pattern
+            // Dispose(true);
+            // … release unmanaged resources here
+            GC.SuppressFinalize(this);
+        }
+        ~AttendanceTask()
+        {
+            Console.WriteLine(".............................Out Attendance Task..........................");
         }
     }
 }
