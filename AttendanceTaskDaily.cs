@@ -24,19 +24,6 @@ namespace AttendancesServices
             Console.WriteLine(".............................In Attendance Task ..........................");
         }
 
-        /* public void RunWeeklyOff()
-        {
-           WeeklyOff OffWeeks = new WeeklyOff(LocalMonthDate, LocalYesterday);
-            try
-            {
-                OffWeeks.GetOffDays();
-            }
-            finally
-            {
-                OffWeeks.Dispose();
-            }
-        }*/
-
         public void DailyServicesAttendance()
         {
             AbsentiesRemoveThread = new(RunRemoveAbsent);
@@ -83,21 +70,7 @@ namespace AttendancesServices
             Monthly21To20AttendanceThread.Start();
             Monthly21To20AttendanceThread.Join();
 
-            /*if (localDate.Day == 24 && now >= start5 && now <= start7)
-            {
-                Thread AbsentiesThread = new Thread(RunAbsent);
-                AbsentiesThread.Start();
-                AbsentiesThread.Join();
-            }
-            if (localDate.Day == 25 && now <= start7)
-            {
-            */
-            /* 
-             * AttendanceMonthly MonthlyAttendance = new AttendanceMonthly();
-             Thread MonthlyAttendanceThread = new Thread(MonthlyAttendance.GetAttendanceApproval); // GazettedOff.GetGazetted();
-             MonthlyAttendanceThread.Start();
-             MonthlyAttendanceThread.Join();*/
-            //}
+          
         }
         public void RunRemoveAbsent()
         {
@@ -147,19 +120,7 @@ namespace AttendancesServices
             {
                 kpiAttend.Dispose();
             }
-            //using (KpiAttendance kpiAttend = new KpiAttendance())
-            /*  // {
-              KpiThread = new Thread(kpiAttend.GetKpiAttendance); //  kpiAttendance.GetKpiAttendance();
-              KpiThread.Start();
-              // KpiThread.Join();
-
-              //}
-              Task.Run(() =>
-              {
-                  KpiThread.Join();
-                  kpiAttend.Dispose();
-              });*/
-
+         
         }
 
         public void RunMachineAttendance()
@@ -229,20 +190,6 @@ namespace AttendancesServices
 
         public void Monthly()
         {
-
-            /*DateTime Start2 = new DateTime(LocalDay.AddMonths(-2).Year, LocalDay.AddMonths(-2).Month, 1);
-            DateTime End2 = new DateTime(LocalDay.AddMonths(-2).Year, LocalDay.AddMonths(-2).Month, DateTime.DaysInMonth(LocalDay.AddMonths(-2).Year, LocalDay.AddMonths(-2).Month));
-            await LinkageMonthAttendance(Start2, End2);
-
-            DateTime Start1 = new DateTime(LocalDay.AddMonths(-1).Year, LocalDay.AddMonths(-1).Month, 1);
-            DateTime End1 = new DateTime(LocalDay.AddMonths(-1).Year, LocalDay.AddMonths(-1).Month, DateTime.DaysInMonth(LocalDay.AddMonths(-1).Year, LocalDay.AddMonths(-1).Month));
-            await LinkageMonthAttendance(Start1, End1);
-
-            DateTime Start = new DateTime(LocalDay.Year, LocalDay.Month, 1);
-            DateTime End = DateTime.Now;
-            await LinkageMonthAttendance(Start, End);*/
-
-
             AttendanceMonthly MonthlyAttendance = new();
             try
             {

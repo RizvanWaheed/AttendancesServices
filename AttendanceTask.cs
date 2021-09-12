@@ -19,8 +19,8 @@ namespace AttendancesServices
         {
             ToDate = toDate;
             FromDate = fromDate;
-            AbsentFromDate = toDate.AddDays(-145);
-            AbsentToDate = toDate.AddDays(-7);
+            AbsentFromDate = fromDate.AddDays(2);
+            AbsentToDate = toDate.AddDays(-1);
 
             Console.WriteLine(".............................In Attendance Task ..........................");
         }

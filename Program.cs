@@ -15,10 +15,10 @@ namespace AttendancesServices
             // Keep the console window open in debug mode.
             Console.WriteLine("Press any key to exit.");
             OnTimedEventFirst();
-            System.Timers.Timer timer = new();
+            /*System.Timers.Timer timer = new();
             timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             timer.Interval = 4800000; //number in milisecinds  
-            timer.Enabled = true;
+            timer.Enabled = true;*/
 
             /*Task task = new Task(() =>
             {
@@ -52,15 +52,15 @@ namespace AttendancesServices
         }
         private static void OnTimedEventFirst()
         {
-            /* AttendanceTask svc = new();
-             svc.AttendanceTaskServicesInitials();*/
-            DateTime FromDate = DateTime.Now.AddDays(-150);
+
+            DateTime FromDate = DateTime.Now.AddDays(-30);
             DateTime ToDate = DateTime.Now.AddDays(-1);
 
             AttendanceTask svc = new(FromDate, ToDate);
             try
             {
                 svc.AttendanceTaskServices();
+
             }
             finally
             {
@@ -68,6 +68,74 @@ namespace AttendancesServices
             }
 
 
+
+           /* DateTime FromDate1 = DateTime.Now.AddDays(-300);
+            DateTime ToDate1 = DateTime.Now.AddDays(-270);
+
+            DateTime FromDate2 = DateTime.Now.AddDays(-270);
+            DateTime ToDate2 = DateTime.Now.AddDays(-240);
+
+            DateTime FromDate3 = DateTime.Now.AddDays(-240);
+            DateTime ToDate3 = DateTime.Now.AddDays(-210);
+
+            DateTime FromDate4 = DateTime.Now.AddDays(-210);
+            DateTime ToDate4 = DateTime.Now.AddDays(-180);
+
+            DateTime FromDate5 = DateTime.Now.AddDays(-180);
+            DateTime ToDate5 = DateTime.Now.AddDays(-150);
+
+
+            AttendanceTask svc1 = new(FromDate1, ToDate1);
+            try
+            {
+                svc1.AttendanceTaskServices();
+
+            }
+            finally
+            {
+                svc1.Dispose();
+                AttendanceTask svc2 = new(FromDate2, ToDate2);
+                try
+                {
+                    svc2.AttendanceTaskServices();
+
+                }
+                finally
+                {
+                    svc2.Dispose();
+                    AttendanceTask svc3 = new(FromDate3, ToDate3);
+                    try
+                    {
+                        svc3.AttendanceTaskServices();
+
+                    }
+                    finally
+                    {
+                        svc3.Dispose();
+                        AttendanceTask svc4 = new(FromDate4, ToDate4);
+                        try
+                        {
+                            svc4.AttendanceTaskServices();
+
+                        }
+                        finally
+                        {
+                            svc4.Dispose();
+                            AttendanceTask svc5 = new(FromDate5, ToDate5);
+                            try
+                            {
+                                svc5.AttendanceTaskServices();
+
+                            }
+                            finally
+                            {
+                                svc5.Dispose();
+                            }
+                        }
+                    }
+                }
+            }
+*/
         }
         private static void OnTimedEvent(object source, ElapsedEventArgs e)
         {
