@@ -14,11 +14,13 @@ namespace AttendancesServices
             // Console.WriteLine("Hello World!");
             // Keep the console window open in debug mode.
             Console.WriteLine("Press any key to exit.");
+            
             OnTimedEventFirst();
-            /*System.Timers.Timer timer = new();
+
+            Timer timer = new();
             timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             timer.Interval = 4800000; //number in milisecinds  
-            timer.Enabled = true;*/
+            timer.Enabled = true;
 
             /*Task task = new Task(() =>
             {
@@ -52,7 +54,6 @@ namespace AttendancesServices
         }
         private static void OnTimedEventFirst()
         {
-
             DateTime FromDate = DateTime.Now.AddDays(-30);
             DateTime ToDate = DateTime.Now.AddDays(-1);
 
@@ -60,7 +61,10 @@ namespace AttendancesServices
             try
             {
                 svc.AttendanceTaskServices();
-
+            }
+            catch
+            {
+                Console.WriteLine("Exception in main...\n");
             }
             finally
             {
@@ -140,7 +144,6 @@ namespace AttendancesServices
         private static void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             Console.WriteLine("I am in time lapsed.");
-
             DateTime FromDate = DateTime.Now.AddDays(-1);
             DateTime ToDate = DateTime.Now;
 
@@ -148,6 +151,10 @@ namespace AttendancesServices
             try
             {
                 svcd.DailyServicesAttendance();
+            }
+            catch
+            {
+                Console.WriteLine("Exception in daily...\n");
             }
             finally
             {

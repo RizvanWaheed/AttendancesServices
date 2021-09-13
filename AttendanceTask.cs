@@ -49,15 +49,16 @@ namespace AttendancesServices
             GazThread = new(RunGazetted); // GazettedOff.GetGazetted();
             GazThread.Start();
             GazThread.Join();
+            
+            AbsentiesThread = new(RunAbsent);
+            AbsentiesThread.Start();
+            AbsentiesThread.Join();
 
             EmployeeLogMappingThread = new(RunEmployeeLogMapping);
             EmployeeLogMappingThread.Start();
             EmployeeLogMappingThread.Join();
 
-            AbsentiesThread = new(RunAbsent);
-            AbsentiesThread.Start();
-            AbsentiesThread.Join();
-
+ 
             Thread MonthlyAttendanceThread = new(Monthly); // GazettedOff.GetGazetted();
             MonthlyAttendanceThread.Start();
             MonthlyAttendanceThread.Join();
@@ -96,7 +97,7 @@ namespace AttendancesServices
             Absent Absenties = new (AbsentFromDate, AbsentToDate);
             try
             {
-                Absenties.RemoveAbsenties();
+                Absenties.RemoveAbsentiesDaily();
             }
             finally
             {
@@ -176,6 +177,18 @@ namespace AttendancesServices
                 GazettedOff.Dispose();
             }
         }
+        public void RunAbsent()
+        {
+            Absent Absenties = new(AbsentFromDate, AbsentToDate);
+            try
+            {
+                Absenties.GetAbsenties();
+            }
+            finally
+            {
+                Absenties.Dispose();
+            }
+        }
         public void RunEmployeeLogMapping()
         {
             EmployeeLogMapping EmployeeLogMap = new (FromDate, ToDate);
@@ -188,18 +201,7 @@ namespace AttendancesServices
                 EmployeeLogMap.Dispose();
             }
         }
-        public void RunAbsent()
-        {
-            Absent Absenties = new (AbsentFromDate, AbsentToDate);
-            try
-            {
-                Absenties.GetAbsenties();
-            }
-            finally
-            {
-                Absenties.Dispose();
-            }
-        }
+        
         
         
         /* public void RunWeeklyOff()
@@ -230,7 +232,7 @@ namespace AttendancesServices
             await LinkageMonthAttendance(Start, End);*/
 
 
-            AttendanceMonthly MonthlyAttendance = new ();
+            AttendanceMonthly MonthlyAttendance = new (ToDate);
             try
             {
                 MonthlyAttendance.GetAttendanceMonthApproval();
@@ -242,7 +244,7 @@ namespace AttendancesServices
         }
         public void Monthly21To20()
         {
-            Attendance21To20 Monthly21To20Attendance = new ();
+            Attendance21To20 Monthly21To20Attendance = new (ToDate);
             try
             {
                 Monthly21To20Attendance.GetAttendance21To20();

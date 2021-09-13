@@ -6,16 +6,17 @@ namespace AttendancesServices
 {
     sealed class AttendanceMonthly : Common, IDisposable
     {
-        private DateTime Start, End, Start1, End1, Start2, End2;
-        private int dayz2, dayz1, dayz;
+        private DateTime Start, End, Start1, End1; //, Start2, End2, Start3, End3, Start4, End4;
+        private int  dayz1, dayz; //, dayz2, dayz3, dayz4;
         private readonly DateTime localDate = DateTime.Now;
         // private readonly DateTime localMonthDate = DateTime.Now.AddMonths(-2);
         private readonly MySqlConnection conn;
         // private DateTime start = new DateTime((int)localDate.Year, (int)LocalDate.Months, 1);
 
         // private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
-        public AttendanceMonthly()
+        public AttendanceMonthly(DateTime To)
         {
+            localDate = To;
             conn = DatabaseConnection.GetDBConnection();
             conn.Open();
 
@@ -33,18 +34,20 @@ namespace AttendancesServices
         }
         public void GetAttendanceMonthApproval()
         {
-            /*DateTime Start4 = new DateTime(localDate.AddMonths(-4).Year, localDate.AddMonths(-4).Month, 1);
-            DateTime End4 = new DateTime(localDate.AddMonths(-4).Year, localDate.AddMonths(-4).Month, DateTime.DaysInMonth(localDate.AddMonths(-4).Year, localDate.AddMonths(-4).Month));
-            LinkageMonthAttendance(Start4, End4);
+            /*Start4 = new DateTime(localDate.AddMonths(-4).Year, localDate.AddMonths(-4).Month, 1);
+            dayz4 = DateTime.DaysInMonth(Start4.Year, Start4.Month);
+            End4 = new DateTime(localDate.AddMonths(-4).Year, localDate.AddMonths(-4).Month, DateTime.DaysInMonth(localDate.AddMonths(-4).Year, localDate.AddMonths(-4).Month));
+            LinkageMonthAttendance(Start4, End4, dayz4);
 
-            DateTime Start3 = new DateTime(localDate.AddMonths(-3).Year, localDate.AddMonths(-3).Month, 1);
-            DateTime End3 = new DateTime(localDate.AddMonths(-3).Year, localDate.AddMonths(-3).Month, DateTime.DaysInMonth(localDate.AddMonths(-3).Year, localDate.AddMonths(-3).Month));
-            LinkageMonthAttendance(Start3, End3);*/
+            Start3 = new DateTime(localDate.AddMonths(-3).Year, localDate.AddMonths(-3).Month, 1);
+            dayz3 = DateTime.DaysInMonth(Start4.Year, Start4.Month);
+            End3 = new DateTime(localDate.AddMonths(-3).Year, localDate.AddMonths(-3).Month, DateTime.DaysInMonth(localDate.AddMonths(-3).Year, localDate.AddMonths(-3).Month));
+            LinkageMonthAttendance(Start3, End3, dayz3);*/
 
-            Start2 = new DateTime(localDate.AddMonths(-2).Year, localDate.AddMonths(-2).Month, 1);
+            /*Start2 = new DateTime(localDate.AddMonths(-2).Year, localDate.AddMonths(-2).Month, 1);
             dayz2 = DateTime.DaysInMonth(Start2.Year, Start2.Month);
             End2 = new DateTime(localDate.AddMonths(-2).Year, localDate.AddMonths(-2).Month, DateTime.DaysInMonth(localDate.AddMonths(-2).Year, localDate.AddMonths(-2).Month));
-            LinkageMonthAttendance(Start2, End2, dayz2);
+            LinkageMonthAttendance(Start2, End2, dayz2);*/
 
             Start1 = new DateTime(localDate.AddMonths(-1).Year, localDate.AddMonths(-1).Month, 1);
             dayz1 = DateTime.DaysInMonth(Start1.Year, Start1.Month);
@@ -53,7 +56,7 @@ namespace AttendancesServices
 
             Start = new DateTime(localDate.Year, localDate.Month, 1);
             dayz = DateTime.DaysInMonth(Start.Year, Start.Month);
-            End = DateTime.Now;
+            End = localDate;  //DateTime.Now;
             LinkageMonthAttendance(Start, End, dayz);
             // return;
         }

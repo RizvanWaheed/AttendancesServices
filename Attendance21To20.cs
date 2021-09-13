@@ -8,12 +8,13 @@ namespace AttendancesServices
     {
         private DateTime Start, End, Start1, End1;
         private int dayz1, dayz;
-        private readonly DateTime localDate = DateTime.Now;
+        private readonly DateTime localDate;// = DateTime.Now;
         // private readonly DateTime localMonthDate = DateTime.Now.AddMonths(-2);
         private readonly MySqlConnection conn;
         // private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
-        public Attendance21To20()
+        public Attendance21To20(DateTime To)
         {
+            localDate = To;
             conn = DatabaseConnection.GetDBConnection();
             conn.Open();
 
@@ -43,13 +44,21 @@ namespace AttendancesServices
 
             Start1 = new DateTime(localDate.AddMonths(-2).Year, localDate.AddMonths(-2).Month, 21);
             End1 = new DateTime(localDate.AddMonths(-1).Year, localDate.AddMonths(-1).Month, 20);
+            dayz1 = DateTime.DaysInMonth(Start1.Year, Start1.Month);
+            LinkageMonthAttendance(Start1, End1, dayz1);
 
             Start = new DateTime(localDate.AddMonths(-1).Year, localDate.AddMonths(-1).Month, 21);
-            End = new DateTime(localDate.Year, localDate.Month, 20);
-            dayz1 = DateTime.DaysInMonth(Start1.Year, Start1.Month);
+            End = new DateTime(localDate.Year, localDate.Month, 20);            
             dayz = DateTime.DaysInMonth(Start.Year, Start.Month);
-            LinkageMonthAttendance(Start1, End1, dayz1);
             LinkageMonthAttendance(Start, End, dayz);
+            
+            if (localDate.Day > 21)
+            {
+                Start = new DateTime(localDate.Year, localDate.Month, 21);
+                End = new DateTime(localDate.AddMonths(1).Year, localDate.AddMonths(1).Month, 20);
+                dayz = DateTime.DaysInMonth(Start.Year, Start.Month);
+                LinkageMonthAttendance(Start, End, dayz);
+            }
 
             return;
         }
