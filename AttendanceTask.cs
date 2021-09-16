@@ -26,6 +26,17 @@ namespace AttendancesServices
         }
         public void AttendanceTaskServices()
         {
+            DateTime localDate = DateTime.Now;
+
+            TimeSpan start1 = TimeSpan.Parse("01:00");
+            TimeSpan start3 = TimeSpan.Parse("03:00");
+            TimeSpan start4 = TimeSpan.Parse("04:00");
+            TimeSpan start5 = TimeSpan.Parse("05:00");
+            TimeSpan start7 = TimeSpan.Parse("07:00");
+
+            TimeSpan end = TimeSpan.Parse("06:00"); // 4 AM
+            TimeSpan now = DateTime.Now.TimeOfDay;
+
             AbsentiesRemoveThread = new(RunRemoveAbsent);
             AbsentiesRemoveThread.Start();
             AbsentiesRemoveThread.Join();
@@ -58,14 +69,17 @@ namespace AttendancesServices
             EmployeeLogMappingThread.Start();
             EmployeeLogMappingThread.Join();
 
- 
-            Thread MonthlyAttendanceThread = new(Monthly); // GazettedOff.GetGazetted();
-            MonthlyAttendanceThread.Start();
-            MonthlyAttendanceThread.Join();
+            if (now <= start7 && now >= start5) //localDate.Day == 25 &&
+            {
+                Thread MonthlyAttendanceThread = new(Monthly); // GazettedOff.GetGazetted();
+                MonthlyAttendanceThread.Start();
+                MonthlyAttendanceThread.Join();
 
-            Thread Monthly21To20AttendanceThread = new(Monthly21To20); // GazettedOff.GetGazetted();
-            Monthly21To20AttendanceThread.Start();
-            Monthly21To20AttendanceThread.Join();
+                Thread Monthly21To20AttendanceThread = new(Monthly21To20); // GazettedOff.GetGazetted();
+                Monthly21To20AttendanceThread.Start();
+                Monthly21To20AttendanceThread.Join();
+            }
+            
 
             /*if (localDate.Day == 24 && now >= start5 && now <= start7)
             {

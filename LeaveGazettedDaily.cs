@@ -1,17 +1,17 @@
-﻿using MySql.Data.MySqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using MySql.Data.MySqlClient;
 using System.Data;
 
 namespace AttendancesServices
 {
-    sealed class LeaveGazetted : CommonQueries, IDisposable
+    sealed class LeaveGazettedDaily : CommonQueries, IDisposable
     {
         private readonly DateTime localDate; // = DateTime.Now.AddDays(-1);
         private readonly DateTime localMonthDate; // = DateTime.Now.AddMonths(-2);
         private readonly MySqlConnection conn;
         // private Dictionary<string, Dictionary<string, Dictionary<string, string>>> DictData;
-        public LeaveGazetted(DateTime From, DateTime To)
+        public LeaveGazettedDaily(DateTime From, DateTime To)
         {
             localDate = To;
             localMonthDate = From;
@@ -36,8 +36,12 @@ namespace AttendancesServices
             string SelectCheckedIn = " select date, type, form " +
                                      " from tbl_leave_gazetted " +
                                      " where status = 1 " +
-                                     "   and date <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
-                                     "   AND date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' ";
+                                     " and ( " +
+                                     " ( date <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
+                                     "      AND date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' ) " +
+                                     " or ( date(created) <= '" + localDate.ToString("yyyy-MM-dd") + "' " +
+                                     "      AND date(created) >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' ) " +
+                                     " ) ";
 
 
             // string SelectCheck = "select count(*) cnt, asm_id from tbl_attendances_machine where date >= '" + localMonthDate.ToString("yyyy-MM-dd") + "' and date <= '" + localDate.ToString("yyyy-MM-dd") + "' group by asm_id";
@@ -153,7 +157,7 @@ namespace AttendancesServices
             GC.SuppressFinalize(this);
 
         }
-        ~LeaveGazetted()
+        ~LeaveGazettedDaily()
         {
             conn.Close();
             conn.Dispose();

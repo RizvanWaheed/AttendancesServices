@@ -113,7 +113,7 @@ namespace AttendancesServices
         }
         public void RunDaily()
         {
-            AttendanceStatus daily = new(FromDate, ToDate);
+            AttendanceStatusDaily daily = new(FromDate, ToDate);
             try
             {
                 daily.GetDailyAttendance();
@@ -126,7 +126,7 @@ namespace AttendancesServices
 
         public void RunKpiAttendance()
         {
-            AttendanceKpi kpiAttend = new(FromDate, ToDate);
+            AttendanceKpiDaily kpiAttend = new(FromDate, ToDate);
             try
             {
                 kpiAttend.GetKpiAttendance();
@@ -140,7 +140,7 @@ namespace AttendancesServices
 
         public void RunMachineAttendance()
         {
-            AttendanceMachine Attendmachine = new(FromDate, ToDate);
+            AttendanceMachineDaily Attendmachine = new(FromDate, ToDate);
             try
             {
                 Attendmachine.GetMachineAttendance();
@@ -153,7 +153,7 @@ namespace AttendancesServices
 
         public void RunLeaveApplications()
         {
-            LeaveApplication LeaveApp = new(FromDate, ToDate);
+            LeaveApplicationDaily LeaveApp = new(FromDate, ToDate);
             try
             {
                 LeaveApp.GetLeaveApplications();
@@ -166,7 +166,7 @@ namespace AttendancesServices
 
         public void RunGazetted()
         {
-            LeaveGazetted GazettedOff = new(FromDate, ToDate);
+            LeaveGazettedDaily GazettedOff = new(FromDate, ToDate);
             try
             {
                 GazettedOff.GetGazetted();
@@ -179,7 +179,7 @@ namespace AttendancesServices
 
         public void RunEmployeeLogMapping()
         {
-            EmployeeLogMapping EmployeeLogMap = new(FromDate, ToDate);
+            EmployeeLogMappingDaily EmployeeLogMap = new(FromDate, ToDate);
             try
             {
                 EmployeeLogMap.GetEmployeeLogMappaing();

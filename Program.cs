@@ -19,7 +19,7 @@ namespace AttendancesServices
 
             Timer timer = new();
             timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            timer.Interval = 4800000; //number in milisecinds  
+            timer.Interval = 6000000; //number in milisecinds  
             timer.Enabled = true;
 
             /*Task task = new Task(() =>
@@ -54,7 +54,7 @@ namespace AttendancesServices
         }
         private static void OnTimedEventFirst()
         {
-            DateTime FromDate = DateTime.Now.AddDays(-30);
+            DateTime FromDate = DateTime.Now.AddDays(-33);
             DateTime ToDate = DateTime.Now.AddDays(-1);
 
             AttendanceTask svc = new(FromDate, ToDate);
