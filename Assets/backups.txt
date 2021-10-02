@@ -561,7 +561,7 @@ namespace AttendancesServices
         {
             // string cardTime = Convert.ToDateTime(dateValue).ToString("yyyy-MM-dd"); 
 
-            string attenShiftQry = "select `times` from `tbl_users_shifts` ";
+            string attenShiftQry = "select `times` from `tbl_attendances_shifts` ";
             attenShiftQry += " where `asm_id` = " + asmId + " and `status` = 1 and date(`dates`) <= '" + dateValue + "' ";
             attenShiftQry += " order by `dates` desc limit 1 ";
 

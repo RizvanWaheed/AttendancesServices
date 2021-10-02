@@ -65,14 +65,14 @@ namespace AttendancesServices
             GazThread = new(RunGazetted); // GazettedOff.GetGazetted();
             GazThread.Start();
             GazThread.Join();
+            
+            AbsentiesThread = new(RunAbsent);
+            AbsentiesThread.Start();
+            AbsentiesThread.Join();
 
             EmployeeLogMappingThread = new(RunEmployeeLogMapping);
             EmployeeLogMappingThread.Start();
             EmployeeLogMappingThread.Join();
-
-            AbsentiesThread = new(RunAbsent);
-            AbsentiesThread.Start();
-            AbsentiesThread.Join();
 
 
             if (now <= start7 && now >= start5) //localDate.Day == 25 &&

@@ -216,8 +216,6 @@ namespace AttendancesServices
             }
         }
         
-        
-        
         /* public void RunWeeklyOff()
         {
            WeeklyOff OffWeeks = new WeeklyOff(LocalMonthDate, LocalYesterday);
